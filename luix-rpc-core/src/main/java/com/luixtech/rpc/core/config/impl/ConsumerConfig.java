@@ -2,11 +2,11 @@ package com.luixtech.rpc.core.config.impl;
 
 import com.luixtech.rpc.core.client.ratelimit.RateLimiter;
 import com.luixtech.rpc.core.constant.ConsumerConstants;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.constraints.NotEmpty;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

@@ -4,11 +4,11 @@ import com.luixtech.rpc.core.config.Configurable;
 import com.luixtech.rpc.core.exception.impl.RpcConfigException;
 import com.luixtech.rpc.core.utils.DebugModeHolder;
 import com.luixtech.rpc.core.utils.JarUtils;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 

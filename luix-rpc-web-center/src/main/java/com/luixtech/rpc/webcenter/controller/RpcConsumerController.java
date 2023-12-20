@@ -1,6 +1,5 @@
 package com.luixtech.rpc.webcenter.controller;
 
-import com.codahale.metrics.annotation.Timed;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
 import com.luixtech.rpc.webcenter.domain.RpcConsumer;
 import com.luixtech.rpc.webcenter.service.RpcConsumerService;
@@ -8,10 +7,9 @@ import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.api.annotations.ParameterObject;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
 
 
 @RestController
-@SecurityRequirement(name = AUTH)
 @AllArgsConstructor
 @Slf4j
 public class RpcConsumerController {
@@ -35,7 +31,6 @@ public class RpcConsumerController {
 
     @Operation(summary = "find consumer list")
     @GetMapping("/api/rpc-consumers")
-    @Timed
     public ResponseEntity<List<RpcConsumer>> findConsumers(
             @ParameterObject Pageable pageable,
             @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG))
@@ -50,7 +45,6 @@ public class RpcConsumerController {
 
     @Operation(summary = "get consumer options")
     @GetMapping("/api/rpc-consumers/options")
-    @Timed
     public ResponseEntity<Map<String, String>> options() {
         return ResponseEntity.ok(ConsumerStub.OPTIONS);
     }

@@ -10,13 +10,13 @@ import com.luixtech.rpc.core.utils.RpcConfigValidator;
 import com.luixtech.rpc.core.utils.SerializerHolder;
 import com.luixtech.rpc.serializer.Serializer;
 import com.luixtech.utilities.network.AddressUtils;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.util.Optional;
 
 @Data

@@ -8,12 +8,12 @@ import com.luixtech.rpc.core.registry.Registry;
 import com.luixtech.rpc.core.registry.factory.RegistryFactory;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.core.utils.RpcConfigValidator;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.Optional;
 import java.util.regex.Pattern;
 

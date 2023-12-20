@@ -1,7 +1,5 @@
 package com.luixtech.rpc.webcenter.controller;
 
-import com.codahale.metrics.annotation.Timed;
-import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import com.luixtech.rpc.webcenter.domain.RpcService;
 import com.luixtech.rpc.webcenter.dto.InterfaceActivateDTO;
 import com.luixtech.rpc.webcenter.dto.ProviderActivateDTO;
@@ -10,13 +8,14 @@ import com.luixtech.rpc.webcenter.repository.RpcServiceRepository;
 import com.luixtech.rpc.webcenter.service.RpcConsumerService;
 import com.luixtech.rpc.webcenter.service.RpcProviderService;
 import com.luixtech.rpc.webcenter.service.RpcServiceService;
+import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.api.annotations.ParameterObject;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -24,15 +23,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
-import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
 import static com.luixtech.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
-@SecurityRequirement(name = AUTH)
 @AllArgsConstructor
 @Slf4j
 public class RpcServiceController {
@@ -45,7 +41,6 @@ public class RpcServiceController {
 
     @Operation(summary = "find service by ID")
     @GetMapping("/api/rpc-services/{id}")
-    @Timed
     public ResponseEntity<RpcService> findById(@Parameter(description = "ID", required = true) @PathVariable String id) {
         RpcService domain = rpcServiceRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         if (rpcProviderService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
@@ -61,7 +56,6 @@ public class RpcServiceController {
 
     @Operation(summary = "find service")
     @GetMapping("/api/rpc-services/service")
-    @Timed
     public ResponseEntity<RpcService> find(
             @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG))
             @RequestParam(value = "registryIdentity") String registryIdentity,
@@ -81,7 +75,6 @@ public class RpcServiceController {
 
     @Operation(summary = "find service list")
     @GetMapping("/api/rpc-services")
-    @Timed
     public ResponseEntity<List<RpcService>> findRpcServices(
             @ParameterObject Pageable pageable,
             @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG))
@@ -118,7 +111,6 @@ public class RpcServiceController {
 
     @Operation(summary = "deactivate all providers of the interface")
     @PutMapping("/api/rpc-services/deactivate")
-    @Timed
     public ResponseEntity<Void> deactivate(@Valid @RequestBody InterfaceActivateDTO activateDTO) {
         rpcProviderService.find(activateDTO.getRegistryIdentity(), activateDTO.getInterfaceName(), true)
                 .forEach(provider -> rpcProviderController.deactivate(

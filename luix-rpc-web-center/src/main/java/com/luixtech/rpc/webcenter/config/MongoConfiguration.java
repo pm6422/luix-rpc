@@ -1,8 +1,6 @@
 package com.luixtech.rpc.webcenter.config;
 
-import io.mongock.runner.springboot.EnableMongock;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,13 +47,6 @@ public class MongoConfiguration {
         this.mongoMappingContext = mongoMappingContext;
         this.mongoDatabaseFactory = mongoDatabaseFactory;
         this.validator = validator;
-    }
-
-    @Configuration
-    @EnableMongock
-    @ConditionalOnProperty("mongock.enabled")
-    protected static class EmbeddedDatabaseConfiguration {
-
     }
 
     @Bean

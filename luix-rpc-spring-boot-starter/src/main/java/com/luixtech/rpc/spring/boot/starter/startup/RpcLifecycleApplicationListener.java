@@ -13,23 +13,22 @@ import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 /**
  * The spring application listener used to start and stop the RPC application.
  */
 public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListener implements Ordered, BeanFactoryAware {
 
-    @Resource
-    private       LuixRpcProperties luixRpcProperties;
-    private final RpcLifecycle      rpcLifecycle;
+    private final LuixRpcProperties          luixRpcProperties;
+    private final RpcLifecycle               rpcLifecycle;
     /**
      * {@link DefaultListableBeanFactory} can register bean definition
      */
     private       DefaultListableBeanFactory beanFactory;
 
-    public RpcLifecycleApplicationListener() {
+    public RpcLifecycleApplicationListener(LuixRpcProperties luixRpcProperties) {
+        Validate.notNull(luixRpcProperties, "luixProperties must NOT be null!");
+        this.luixRpcProperties = luixRpcProperties;
         this.rpcLifecycle = RpcLifecycle.getInstance();
     }
 
@@ -38,11 +37,6 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
         Assert.isInstanceOf(DefaultListableBeanFactory.class, beanFactory,
                 "It requires an instance of ".concat(DefaultListableBeanFactory.class.getSimpleName()));
         this.beanFactory = (DefaultListableBeanFactory) beanFactory;
-    }
-
-    @PostConstruct
-    public void init() {
-        Validate.notNull(luixRpcProperties, "luixProperties must NOT be null!");
     }
 
     @Override

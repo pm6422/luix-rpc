@@ -14,4 +14,7 @@
         <module>luix-rpc-demo-server</module>
         <module>luix-rpc-demo-client</module>
     </modules>
+    <properties>
+        <java.version>21</java.version>
+    </properties>
 </project>

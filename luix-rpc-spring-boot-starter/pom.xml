@@ -10,7 +10,8 @@
     <name>${project.artifactId}</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring_boot_version>2.7.1</spring_boot_version>
+        <spring_boot_version>3.2.0</spring_boot_version>
+        <java.version>21</java.version>
     </properties>
     <dependencies>
         <dependency>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.1</version>
+        <version>3.2.0</version>
         <relativePath/>
     </parent>
     <groupId>com.luixtech</groupId>
@@ -13,15 +13,16 @@
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <properties>
-        <harborPassword/>
-        <harborUrl/>
-        <harborUsername/>
-        <java.version>11</java.version>
+        <jib.arch>amd64</jib.arch>
+        <jib.goal>dockerBuild</jib.goal>
+        <jib.image.version>latest</jib.image.version>
+        <jib.registry.password/>
+        <jib.registry.url/>
+        <jib.registry.username/>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.version>3.6.2</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <skipJibBuild>true</skipJibBuild>
         <start-class>com.luixtech.rpc.democlient.LuixRpcDemoClientApplication</start-class>
     </properties>
     <dependencyManagement>
@@ -48,18 +49,12 @@
         </dependency>
         <dependency>
             <groupId>com.luixtech</groupId>
-            <artifactId>luix-springboot2-framework</artifactId>
+            <artifactId>luix-springboot3-framework</artifactId>
         </dependency>
-        <!-- performance testing -->
         <dependency>
             <groupId>org.databene</groupId>
             <artifactId>contiperf</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -89,24 +84,6 @@
                             <goal>sort</goal>
                         </goals>
                         <phase>verify</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/assembly/assembly.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -175,7 +152,6 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>${start-class}</mainClass>
-                    <fork>true</fork>
                     <!--
                     Enable the line below to have remote debugging of your application on port 5005
                     <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
@@ -192,4 +168,78 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <version>3.4.0</version>
+                        <configuration>
+                            <from>
+                                <image>eclipse-temurin:21-jre-jammy</image>
+                                <platforms>
+                                    <platform>
+                                        <architecture>${jib.arch}</architecture>
+                                        <os>linux</os>
+                                    </platform>
+                                </platforms>
+                            </from>
+                            <to>
+                                <image>${jib.registry.url}${project.artifactId}:${jib.image.version}</image>
+                                <auth>
+                                    <username>${jib.registry.username}</username>
+                                    <password>${jib.registry.password}</password>
+                                </auth>
+                            </to>
+                            <container>
+                                <entrypoint>
+                                    <shell>bash</shell>
+                                    <option>-c</option>
+                                    <arg>/entrypoint.sh</arg>
+                                </entrypoint>
+                                <ports>
+                                    <port>4000</port>
+                                </ports>
+                                <environment>
+                                    <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
+                                    <SLEEP_TIME>1</SLEEP_TIME>
+                                    <START_CLASS>${start-class}</START_CLASS>
+                                    <TZ>Asia/Shanghai</TZ>
+                                </environment>
+                                <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                                <user>root</user>
+                            </container>
+                            <extraDirectories>
+                                <paths>
+                                    <path>src/main/jib</path>
+                                </paths>
+                                <permissions>
+                                    <permission>
+                                        <file>/entrypoint.sh</file>
+                                        <mode>755</mode>
+                                    </permission>
+                                    <permission>
+                                        <file>/arthas-run.sh</file>
+                                        <mode>755</mode>
+                                    </permission>
+                                </permissions>
+                            </extraDirectories>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>build</id>
+                                <goals>
+                                    <goal>${jib.goal}</goal>
+                                </goals>
+                                <phase>compile</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

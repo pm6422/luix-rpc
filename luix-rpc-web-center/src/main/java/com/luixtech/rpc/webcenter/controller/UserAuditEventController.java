@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
-import org.springdoc.api.annotations.ParameterObject;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,14 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
-
-
 /**
  * REST controller for managing the user audit events.
  */
 @RestController
-@SecurityRequirement(name = AUTH)
 @AllArgsConstructor
 public class UserAuditEventController {
     private final PersistenceAuditEventRepository persistenceAuditEventRepository;

@@ -1,12 +1,10 @@
 package com.luixtech.rpc.webcenter.controller;
 
-import com.codahale.metrics.annotation.Timed;
 import com.luixtech.rpc.webcenter.dto.StatisticDTO;
 import com.luixtech.rpc.webcenter.service.RpcStatisticService;
 import com.luixtech.rpc.webcenter.task.polling.queue.InMemoryAsyncTaskQueue;
 import com.luixtech.rpc.webcenter.utils.TraceIdUtils;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +14,10 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.task.polling.AsyncTask.NAME_STATISTIC;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@SecurityRequirement(name = AUTH)
 @AllArgsConstructor
 @Slf4j
 public class RpcStatisticController {
@@ -29,7 +25,6 @@ public class RpcStatisticController {
 
     @Operation(summary = "get RPC statistic data")
     @GetMapping("api/rpc-statistics/data")
-    @Timed
     public DeferredResult<ResponseEntity<StatisticDTO>> getStatistics() {
         DeferredResult<ResponseEntity<StatisticDTO>> deferredResult = new DeferredResult<>(TimeUnit.MINUTES.toMillis(1));
         handleAsyncError(deferredResult);

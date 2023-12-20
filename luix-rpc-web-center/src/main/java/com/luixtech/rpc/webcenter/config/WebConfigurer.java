@@ -1,8 +1,7 @@
 package com.luixtech.rpc.webcenter.config;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.servlet.InstrumentedFilter;
-import com.codahale.metrics.servlets.MetricsServlet;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.ServletContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,10 +19,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -43,12 +38,10 @@ import static java.net.URLDecoder.decode;
 public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<UndertowServletWebServerFactory> {
     private final Environment           env;
     private final ApplicationProperties applicationProperties;
-    private final MetricRegistry        metricRegistry;
 
     @Override
     public void onStartup(ServletContext servletContext) {
         EnumSet<DispatcherType> types = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC);
-        initMetrics(servletContext, types);
     }
 
     /**
@@ -105,30 +98,6 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
             return "";
         }
         return extractedPath.substring(0, extractionEndIndex);
-    }
-
-    /**
-     * Initializes Metrics.
-     */
-    private void initMetrics(ServletContext servletContext, EnumSet<DispatcherType> disps) {
-        servletContext.setAttribute(InstrumentedFilter.REGISTRY_ATTRIBUTE, metricRegistry);
-        servletContext.setAttribute(MetricsServlet.METRICS_REGISTRY, metricRegistry);
-        log.info("Initialized metrics registry");
-
-        FilterRegistration.Dynamic metricsFilter = servletContext.addFilter("webappMetricsFilter",
-                new InstrumentedFilter());
-        metricsFilter.addMappingForUrlPatterns(disps, true, "/*");
-        metricsFilter.setAsyncSupported(true);
-        log.info("Registered metrics filter");
-
-        ServletRegistration.Dynamic metricsAdminServlet = servletContext.addServlet("metricsServlet",
-                new MetricsServlet());
-        // Visit the following address to get more metrics info
-        // http://localhost:9010/api/metrics?access_token=7d305527-d4cc-4555-9de4-77fdd345d3a5
-        metricsAdminServlet.addMapping("/api/metrics/*");
-        metricsAdminServlet.setAsyncSupported(true);
-        metricsAdminServlet.setLoadOnStartup(2);
-        log.info("Registered metrics servlet");
     }
 
     @Bean

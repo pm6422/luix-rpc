@@ -3,6 +3,7 @@ package com.luixtech.rpc.democommon.domain;
 import com.luixtech.rpc.democommon.domain.base.AbstractAuditableDomain;
 import com.luixtech.rpc.democommon.dto.AdminMenuDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.*;
 import java.io.Serializable;
 
 /**

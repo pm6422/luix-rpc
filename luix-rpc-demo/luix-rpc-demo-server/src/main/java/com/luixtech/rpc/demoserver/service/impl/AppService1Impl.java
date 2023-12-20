@@ -9,12 +9,12 @@ import com.luixtech.rpc.democommon.domain.App;
 import com.luixtech.rpc.democommon.service.AppService;
 import com.luixtech.rpc.demoserver.repository.AppRepository;
 import com.luixtech.utilities.exception.DataNotFoundException;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 
-import javax.annotation.Resource;
 
 @RpcProvider(form = "f1", retryCount = "1")
 @Slf4j

@@ -1,10 +1,10 @@
 package com.luixtech.rpc.webcenter.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * DTO for storing a user's credentials.

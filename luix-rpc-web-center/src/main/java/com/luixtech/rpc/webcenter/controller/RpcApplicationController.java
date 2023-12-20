@@ -1,6 +1,5 @@
 package com.luixtech.rpc.webcenter.controller;
 
-import com.codahale.metrics.annotation.Timed;
 import com.luixtech.rpc.webcenter.domain.RpcApplication;
 import com.luixtech.rpc.webcenter.repository.RpcApplicationRepository;
 import com.luixtech.rpc.webcenter.service.RpcApplicationService;
@@ -10,10 +9,9 @@ import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.api.annotations.ParameterObject;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
 
 
 @RestController
-@SecurityRequirement(name = AUTH)
 @AllArgsConstructor
 @Slf4j
 public class RpcApplicationController {
@@ -40,7 +36,6 @@ public class RpcApplicationController {
 
     @Operation(summary = "find all application names")
     @GetMapping("api/rpc-applications/names")
-    @Timed
     public ResponseEntity<List<String>> findApplications(
             @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG))
             @RequestParam(value = "registryIdentity") String registryIdentity) {
@@ -51,7 +46,6 @@ public class RpcApplicationController {
 
     @Operation(summary = "find application list")
     @GetMapping("api/rpc-applications")
-    @Timed
     public ResponseEntity<List<RpcApplication>> findApplications(
             @ParameterObject Pageable pageable,
             @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG))

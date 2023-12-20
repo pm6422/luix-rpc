@@ -2,6 +2,7 @@ package com.luixtech.rpc.spring.boot.starter.config;
 
 import com.luixtech.rpc.core.config.impl.*;
 import com.luixtech.rpc.core.exception.impl.RpcConfigException;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -11,7 +12,6 @@ import org.springframework.core.SpringVersion;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static com.luixtech.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;

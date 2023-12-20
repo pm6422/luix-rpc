@@ -1,27 +1,51 @@
 # This configuration is intended for development purpose, it's **your** responsibility to harden it for production
-version: '3.8'
+name: luix
 services:
-  luix-demo-server-docker:
-    image: pm6422/luix-demo-server:1.0.0
+  rpc-server-demo:
+    image: luix-rpc-demo-server
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=dev
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-#      - SPRING_DATA_MONGODB_URI=mongodb://localhost:27017
-#      - SPRING_DATA_MONGODB_DATABASE=luix-demo-server
-      - SLEEP_TIME=30 # gives time for other services to boot before the application
-    # If you want to expose these ports outside your dev PC,
-    # remove the "127.0.0.1:" prefix
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/luix-rpc-demo-server
+      - LUIX_RPC_REGISTRY_HOST=consul
     ports:
       - 127.0.0.1:6010:6010
-  luix-demo-client-docker:
-    image: pm6422/luix-demo-client:1.0.0
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:6010/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+  rpc-client-demo:
+    image: luix-rpc-demo-client
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=dev
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-      - SLEEP_TIME=30 # gives time for other services to boot before the application
-    # If you want to expose these ports outside your dev PC,
-    # remove the "127.0.0.1:" prefix
+      - LUIX_RPC_REGISTRY_HOST=consul
     ports:
       - 127.0.0.1:6020:6020
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:6020/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      rpc-server-demo:
+        condition: service_healthy
+  consul:
+    extends:
+      file: ./consul.yml
+      service: consul
+  mongodb:
+    extends:
+      file: ./mongodb.yml
+      service: mongodb

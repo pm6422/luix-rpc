@@ -1,11 +1,11 @@
 package com.luixtech.rpc.core.config.impl;
 
 import com.luixtech.rpc.core.config.Configurable;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 
 @Data
 public abstract class ServiceConfig implements Configurable {

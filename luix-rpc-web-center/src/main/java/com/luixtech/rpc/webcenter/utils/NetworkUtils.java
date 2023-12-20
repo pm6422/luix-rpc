@@ -1,6 +1,7 @@
 package com.luixtech.rpc.webcenter.utils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Objects;
 
 public abstract class NetworkUtils {

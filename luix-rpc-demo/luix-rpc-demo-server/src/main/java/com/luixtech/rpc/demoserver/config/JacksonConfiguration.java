@@ -4,8 +4,6 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.zalando.problem.jackson.ProblemModule;
-import org.zalando.problem.violations.ConstraintViolationProblemModule;
 
 @Configuration
 public class JacksonConfiguration {
@@ -25,23 +23,4 @@ public class JacksonConfiguration {
         return new Jdk8Module();
     }
 
-    /**
-     * Module for serialization/deserialization of RFC7807 Problem.
-     *
-     * @return module instance
-     */
-    @Bean
-    public ProblemModule problemModule() {
-        return new ProblemModule();
-    }
-
-    /**
-     * Module for serialization/deserialization of ConstraintViolationProblem.
-     *
-     * @return module instance
-     */
-    @Bean
-    public ConstraintViolationProblemModule constraintViolationProblemModule() {
-        return new ConstraintViolationProblemModule();
-    }
 }

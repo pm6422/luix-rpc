@@ -6,40 +6,40 @@ import com.luixtech.rpc.webcenter.domain.RpcScheduledTask;
 import com.luixtech.rpc.webcenter.domain.User;
 import com.luixtech.rpc.webcenter.domain.UserAuthority;
 import com.luixtech.rpc.webcenter.service.RpcApplicationService;
+import com.luixtech.rpc.webcenter.service.RpcScheduledTaskService;
 import com.luixtech.rpc.webcenter.service.RpcServerService;
 import com.luixtech.rpc.webcenter.service.RpcServiceService;
 import com.luixtech.uidgenerator.core.id.IdGenerator;
-import io.mongock.api.annotations.ChangeUnit;
-import io.mongock.api.annotations.Execution;
-import io.mongock.api.annotations.RollbackExecution;
+import lombok.AllArgsConstructor;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates the initial database
  */
-@ChangeUnit(id = "InitialSetupMigration", order = "01")
-public class InitialSetupMigration {
+@Component
+@AllArgsConstructor
+public class InitialSetupMigration implements ApplicationRunner {
 
-    private static final String         APP_NAME = "rpc-web-center";
-    private final MongoTemplate     mongoTemplate;
-    private final LuixRpcProperties luixRpcProperties;
+    private static final String            APP_NAME = "rpc-web-center";
+    private final        MongoTemplate     mongoTemplate;
+    private final LuixRpcProperties       luixRpcProperties;
+    private final RpcScheduledTaskService rpcScheduledTaskService;
 
-    public InitialSetupMigration(MongoTemplate mongoTemplate, LuixRpcProperties luixRpcProperties) {
-        this.mongoTemplate = mongoTemplate;
-        this.luixRpcProperties = luixRpcProperties;
-    }
-
-    @Execution
-    public void execute() {
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        drop();
         addAuthorities();
         addUserAndAuthorities();
         addScheduledTasks();
+        rpcScheduledTaskService.loadAll();
     }
 
-    @RollbackExecution
-    public void rollback() {
+    public void drop() {
         mongoTemplate.getDb().drop();
     }
 

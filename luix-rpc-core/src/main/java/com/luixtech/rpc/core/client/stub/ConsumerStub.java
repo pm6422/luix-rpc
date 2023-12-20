@@ -15,16 +15,16 @@ import com.luixtech.rpc.core.registry.factory.RegistryFactory;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.core.utils.name.ConsumerStubBeanNameBuilder;
 import com.luixtech.utilities.network.AddressUtils;
+import jakarta.annotation.PostConstruct;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 import java.util.*;
 import java.util.stream.Collectors;
 

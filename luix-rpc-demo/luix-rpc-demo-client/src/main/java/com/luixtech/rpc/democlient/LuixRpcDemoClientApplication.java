@@ -4,13 +4,13 @@ import com.luixtech.springbootframework.EnableLuixSpringBootFramework;
 import com.luixtech.rpc.serializer.kryo.KryoUtils;
 import com.luixtech.rpc.spring.boot.starter.EnableLuixRpc;
 import com.luixtech.rpc.spring.enhancement.kryo.serializer.*;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 
-import javax.annotation.PostConstruct;
 
 @Slf4j
 @SpringBootApplication

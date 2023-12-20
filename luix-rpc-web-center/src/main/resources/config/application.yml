@@ -120,15 +120,6 @@ logging:
     config: classpath:config/logback-spring.xml
     level:
         root: INFO
-mongock:
-    enabled: true
-    track-ignored: true
-    migration-scan-package:
-        - ${app.package}.config.dbmigrations
-    mongo-db:
-        read-concern: local
-        write-concern:
-            journal: false
 luix-rpc:
     application:
         id: ${spring.application.name}

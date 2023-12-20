@@ -3,7 +3,7 @@ package com.luixtech.rpc.webcenter.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 @Data
 @Builder

@@ -1,13 +1,9 @@
 package com.luixtech.rpc.demoserver.controller;
 
+import com.luixtech.rpc.demoserver.config.dbmigrations.InitialSetupMigration;
 import com.luixtech.springbootframework.config.LuixProperties;
-import io.mongock.api.config.MongockConfiguration;
-import io.mongock.driver.api.driver.ConnectionDriver;
-import io.mongock.driver.mongodb.springdata.v3.config.MongoDBConfiguration;
-import io.mongock.driver.mongodb.springdata.v3.config.SpringDataMongoV3Context;
-import io.mongock.runner.springboot.MongockSpringboot;
-import io.mongock.runner.springboot.RunnerSpringbootBuilder;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -52,9 +47,7 @@ public class SystemController {
     @Resource
     private ApplicationEventPublisher            applicationEventPublisher;
     @Resource
-    private MongockConfiguration                 mongockConfiguration;
-    @Resource
-    private MongoDBConfiguration                 mongoDBConfiguration;
+    private InitialSetupMigration                initialSetupMigration;
     @Resource
     private Optional<PlatformTransactionManager> txManagerOpt;
 
@@ -107,15 +100,7 @@ public class SystemController {
 
     @Scheduled(cron = "0 0/5 * * * ?")
     public void reset() throws Exception {
-        mongoTemplate.getDb().drop();
-
-        ConnectionDriver connectionDriver = new SpringDataMongoV3Context()
-                .connectionDriver(mongoTemplate, mongockConfiguration, mongoDBConfiguration, txManagerOpt);
-        RunnerSpringbootBuilder runnerSpringbootBuilder = MongockSpringboot.builder()
-                .setDriver(connectionDriver)
-                .setConfig(mongockConfiguration)
-                .setSpringContext(applicationContext)
-                .setEventPublisher(applicationEventPublisher);
-        runnerSpringbootBuilder.buildRunner().execute();
+        initialSetupMigration.drop();
+        initialSetupMigration.run(null);
     }
 }

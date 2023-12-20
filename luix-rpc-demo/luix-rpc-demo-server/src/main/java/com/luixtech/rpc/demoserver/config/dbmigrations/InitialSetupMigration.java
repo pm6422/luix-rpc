@@ -3,34 +3,32 @@ package com.luixtech.rpc.demoserver.config.dbmigrations;
 import com.luixtech.rpc.democommon.domain.AdminMenu;
 import com.luixtech.rpc.democommon.domain.App;
 import com.luixtech.rpc.democommon.domain.Authority;
-import io.mongock.api.annotations.ChangeUnit;
-import io.mongock.api.annotations.Execution;
-import io.mongock.api.annotations.RollbackExecution;
+import lombok.AllArgsConstructor;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates the initial database
  */
-@ChangeUnit(id = "InitialSetupMigration", order = "01")
-public class InitialSetupMigration {
+@Component
+@AllArgsConstructor
+public class InitialSetupMigration implements ApplicationRunner {
 
     private static final String        APP_NAME       = "rpc-demo-server";
     private static final String        MENU_PARENT_ID = "0";
     private final        MongoTemplate mongoTemplate;
 
-    public InitialSetupMigration(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
-
-    @Execution
-    public void execute() {
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        drop();
         addApps();
         addAuthorities();
         addAuthorityAdminMenu();
     }
 
-    @RollbackExecution
-    public void rollback() {
+    public void drop() {
         mongoTemplate.getDb().drop();
     }
 

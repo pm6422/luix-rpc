@@ -96,9 +96,6 @@ spring:
             max-request-size: 30MB
     banner:
         location: classpath:config/banner-company.txt
-    mongodb:
-        embedded:
-            version: 4.0.0
     data:
         mongodb:
             auto-index-creation: false
@@ -120,21 +117,12 @@ server:
             # and this statement can effect spring session, used by SessionProperties
 logging:
     level:
-        root: DEBUG
+        root: INFO
         org.springframework.boot.devtools.autoconfigure: INFO
         org.apache: WARN
         org.mongodb.driver: WARN
         sun.rmi: WARN
         jdk.event.security: WARN
-mongock:
-    enabled: true
-    track-ignored: true
-    migration-scan-package:
-        - ${app.package}.config.dbmigrations
-    mongo-db:
-        read-concern: local
-        write-concern:
-            journal: false
 luix-rpc:
     application:
         id: ${spring.application.name}

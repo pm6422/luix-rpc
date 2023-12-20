@@ -1,10 +1,7 @@
-# ===================================================================
-# Spring Boot configuration for the "dev" profile.
-#
-# This configuration overrides the application.yml file.
-# Full reference is available at:
-# https://docs.spring.io/spring-boot/docs/2.7.1/reference/html/application-properties.html#application-properties
-# ===================================================================
+spring:
+    data:
+        mongodb:
+            uri: mongodb://localhost:27017/${spring.application.name}
 luix-rpc:
     registry:
         host: localhost

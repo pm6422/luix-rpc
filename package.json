@@ -7,7 +7,7 @@
   "scripts": {
     "all:up": "docker compose -f docker/all.yml up --wait",
     "all:down": "docker compose -f docker/all.yml down",
-    "docker:build": "./mvnw compile -ntp verify -DskipTests -Prelease -Djib.image.version=1d -Djib.registry.url=ttl.sh/",
+    "docker:build": "./mvnw compile -ntp verify -DskipTests -Prelease",
     "docker:build:arm64": "npm run docker:build -- -Djib.arch=arm64"
   }
 }

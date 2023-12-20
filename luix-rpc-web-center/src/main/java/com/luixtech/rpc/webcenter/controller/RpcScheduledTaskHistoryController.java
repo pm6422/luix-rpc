@@ -1,6 +1,5 @@
 package com.luixtech.rpc.webcenter.controller;
 
-import com.codahale.metrics.annotation.Timed;
 import com.luixtech.rpc.webcenter.domain.RpcScheduledTaskHistory;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.repository.RpcScheduledTaskHistoryRepository;
@@ -11,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.api.annotations.ParameterObject;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
@@ -32,7 +30,6 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
  * REST controller for managing RPC scheduled task histories.
  */
 @RestController
-@SecurityRequirement(name = AUTH)
 @AllArgsConstructor
 @Slf4j
 public class RpcScheduledTaskHistoryController {
@@ -40,7 +37,6 @@ public class RpcScheduledTaskHistoryController {
 
     @Operation(summary = "find scheduled task history list")
     @GetMapping("/api/rpc-scheduled-task-histories")
-    @Timed
     public ResponseEntity<List<RpcScheduledTaskHistory>> find(@ParameterObject Pageable pageable,
                                                               @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
                                                               @Parameter(description = "Task name") @RequestParam(value = "name", required = false) String name,
@@ -63,7 +59,6 @@ public class RpcScheduledTaskHistoryController {
 
     @Operation(summary = "find scheduled task history by ID")
     @GetMapping("/api/rpc-scheduled-task-histories/{id}")
-    @Timed
     public ResponseEntity<RpcScheduledTaskHistory> findById(@Parameter(description = "task ID", required = true) @PathVariable String id) {
         RpcScheduledTaskHistory history = rpcScheduledTaskHistoryRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(history);

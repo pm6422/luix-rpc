@@ -1,18 +1,18 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.google.common.collect.ImmutableMap;
-import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.exception.DuplicationException;
 import com.luixtech.rpc.webcenter.repository.AuthorityRepository;
 import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
+import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.api.annotations.ParameterObject;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -20,17 +20,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
-
-import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
 
 
 /**
  * REST controller for managing authorities.
  */
 @RestController
-@SecurityRequirement(name = AUTH)
 @AllArgsConstructor
 @Slf4j
 public class AuthorityController {

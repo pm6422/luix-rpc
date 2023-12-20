@@ -1,7 +1,5 @@
 package com.luixtech.rpc.webcenter.controller;
 
-import com.codahale.metrics.annotation.Timed;
-import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import com.luixtech.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import com.luixtech.rpc.core.client.proxy.Proxy;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
@@ -20,14 +18,15 @@ import com.luixtech.rpc.webcenter.repository.RpcProviderRepository;
 import com.luixtech.rpc.webcenter.service.RpcProviderService;
 import com.luixtech.rpc.webcenter.service.RpcRegistryService;
 import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
+import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springdoc.api.annotations.ParameterObject;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -35,31 +34,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_BROADCAST;
 import static com.luixtech.rpc.core.server.stub.ProviderStub.*;
 import static com.luixtech.rpc.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
 import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
 
 @RestController
-@SecurityRequirement(name = AUTH)
 @AllArgsConstructor
 @Slf4j
 public class RpcProviderController {
-    private final LuixRpcProperties  luixRpcProperties;
-    private final RpcRegistryService rpcRegistryService;
+    private final LuixRpcProperties     luixRpcProperties;
+    private final RpcRegistryService    rpcRegistryService;
     private final RpcProviderService    rpcProviderService;
     private final RpcProviderRepository rpcProviderRepository;
     private final HttpHeaderCreator     httpHeaderCreator;
 
     @Operation(summary = "find provider by ID")
     @GetMapping("/api/rpc-providers/{id}")
-    @Timed
     public ResponseEntity<RpcProvider> findById(@Parameter(description = "ID", required = true) @PathVariable String id) {
         RpcProvider domain = rpcProviderRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(domain);
@@ -67,7 +62,6 @@ public class RpcProviderController {
 
     @Operation(summary = "find provider list")
     @GetMapping("/api/rpc-providers")
-    @Timed
     public ResponseEntity<List<RpcProvider>> findProviders(
             @ParameterObject Pageable pageable,
             @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
@@ -81,7 +75,6 @@ public class RpcProviderController {
 
     @Operation(summary = "find all methods of provider")
     @GetMapping("/api/rpc-providers/methods")
-    @Timed
     public ResponseEntity<List<MethodMeta>> findMethods(
             @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
             @Parameter(description = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
@@ -95,7 +88,6 @@ public class RpcProviderController {
 
     @Operation(summary = "check health of provider", description = "There is no service discovery in the direct connection mode, even the inactive provider can be called successfully")
     @GetMapping("/api/rpc-providers/health")
-    @Timed
     public ResponseEntity<String> health(
             @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
             @Parameter(description = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
@@ -123,7 +115,6 @@ public class RpcProviderController {
     @Operation(summary = "activate provider")
     @PutMapping("/api/rpc-providers/activate")
     @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
-    @Timed
     public ResponseEntity<Void> activate(@Valid @RequestBody ProviderActivateDTO activateDTO) {
         Url providerUrl = Url.valueOf(activateDTO.getProviderUrl());
         control(activateDTO.getRegistryIdentity(), providerUrl, METHOD_ACTIVATE);
@@ -134,7 +125,6 @@ public class RpcProviderController {
     @Operation(summary = "deactivate provider")
     @PutMapping("/api/rpc-providers/deactivate")
     @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
-    @Timed
     public ResponseEntity<Void> deactivate(@Valid @RequestBody ProviderActivateDTO activateDTO) {
         Url providerUrl = Url.valueOf(activateDTO.getProviderUrl());
         control(activateDTO.getRegistryIdentity(), providerUrl, METHOD_DEACTIVATE);
@@ -189,7 +179,6 @@ public class RpcProviderController {
     @Operation(summary = "save options")
     @PutMapping("/api/rpc-providers/options")
     @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
-    @Timed
     public ResponseEntity<Void> saveOptions(@Parameter(description = "optionsDTO", required = true)
                                             @Valid @RequestBody OptionsDTO optionsDTO) {
         Url providerUrl = Url.valueOf(optionsDTO.getUrl());

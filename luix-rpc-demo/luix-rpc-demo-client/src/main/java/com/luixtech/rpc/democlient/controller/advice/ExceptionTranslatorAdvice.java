@@ -8,6 +8,7 @@ import com.luixtech.rpc.democlient.dto.ErrorDTO;
 import com.luixtech.rpc.democlient.exception.DataNotFoundException;
 import com.luixtech.rpc.democlient.exception.DuplicationException;
 import com.luixtech.rpc.democlient.exception.NoAuthorityException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
