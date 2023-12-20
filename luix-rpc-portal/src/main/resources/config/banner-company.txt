@@ -8,5 +8,5 @@ ${AnsiColor.RED}
 
 ${AnsiColor.WHITE}████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
                                             ${AnsiColor.YELLOW}:: Powered by Spring Boot ${spring-boot.version} ::
-                                            ${AnsiColor.YELLOW}:: http://www.luixtech.cn ::
+                                            ${AnsiColor.YELLOW}:: https://rpc.luixtech.cn ::
                                             ${AnsiColor.YELLOW}:: Designed by ${AnsiStyle.BOLD}Louis ::${AnsiStyle.NORMAL}${AnsiColor.DEFAULT}
