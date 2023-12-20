@@ -1,5 +1,4 @@
-# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
-version: '3.8'
+name: luix
 services:
   sonar-docker:
     image: sonarqube:9.2.4-community
