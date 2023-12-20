@@ -70,7 +70,7 @@ spring:
         name: ${app.id}
     profiles:
         #It can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
-        active: prod
+        active: dev
     messages:
         basename: i18n/messages
     thymeleaf: #ThymeleafAutoConfiguration
