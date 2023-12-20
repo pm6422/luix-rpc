@@ -15,7 +15,7 @@
     <description>Luix RPC dependencies BOM</description>
     <url>http://www.luixtech.cn</url>
     <properties>
-        <assertj_version>3.22.0</assertj_version>
+        <assertj_version>3.24.0</assertj_version>
         <consul_version>1.4.5</consul_version>
         <contiperf_version>2.3.4</contiperf_version>
         <curator_version>4.0.1</curator_version>
@@ -23,7 +23,7 @@
         <jackson_version>2.15.3</jackson_version>
         <jakarta_annotation_version>2.1.1</jakarta_annotation_version>
         <java.version>11</java.version>
-        <junit_jupiter_version>5.7.2</junit_jupiter_version>
+        <junit_jupiter_version>5.10.1</junit_jupiter_version>
         <junit_version>4.13.2</junit_version>
         <kryo_serializers_version>0.45</kryo_serializers_version>
         <kryo_version>5.3.0</kryo_version>
