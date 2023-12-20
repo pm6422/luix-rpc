@@ -1,7 +1,7 @@
 name: luix
 services:
   mongodb:
-    image: mongo:4.4.10
+    image: mongo:5.0
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
