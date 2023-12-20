@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 @SpringBootApplication
 @EnableLuixRpc
 @EnableLuixSpringBootFramework
-public class LuixRpcDemoClientApplication {
+public class LuixRpcClientDemoApplication {
 
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments
@@ -25,7 +25,7 @@ public class LuixRpcDemoClientApplication {
      * @param args program arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(LuixRpcDemoClientApplication.class, args);
+        SpringApplication.run(LuixRpcClientDemoApplication.class, args);
     }
 
     @PostConstruct

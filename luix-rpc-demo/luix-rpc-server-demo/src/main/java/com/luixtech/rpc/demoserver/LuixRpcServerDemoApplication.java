@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 @SpringBootApplication
 @EnableLuixRpc
 @EnableLuixSpringBootFramework
-public class LuixRpcDemoServerApplication {
+public class LuixRpcServerDemoApplication {
     public static ConfigurableApplicationContext applicationContext;
 
     /**
@@ -25,7 +25,7 @@ public class LuixRpcDemoServerApplication {
      * @param args program arguments
      */
     public static void main(String[] args) {
-        applicationContext = SpringApplication.run(LuixRpcDemoServerApplication.class, args);
+        applicationContext = SpringApplication.run(LuixRpcServerDemoApplication.class, args);
     }
 
     @PostConstruct

@@ -23,7 +23,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.version>3.6.2</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>com.luixtech.rpc.demoserver.LuixRpcDemoServerApplication</start-class>
+        <start-class>com.luixtech.rpc.demoserver.LuixRpcServerDemoApplication</start-class>
     </properties>
     <dependencyManagement>
         <dependencies>
