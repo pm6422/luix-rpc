@@ -5,7 +5,7 @@
   "description": "Luix RPC Package Management",
   "license": "UNLICENSED",
   "scripts": {
-    "docker:build": "./mvnw compile -ntp verify -DskipTests -Prelease",
+    "docker:build": "./mvnw compile -ntp verify -DskipTests -Prelease -Djib.image.version=1d -Djib.registry.url=ttl.sh/",
     "docker:build:arm64": "npm run docker:build -- -Djib.arch=arm64"
   }
 }
