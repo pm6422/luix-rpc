@@ -20,6 +20,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 40
+    depends_on:
+      mongodb:
+        condition: service_healthy
   rpc-client-demo:
     image: luix-rpc-demo-client
     environment:
