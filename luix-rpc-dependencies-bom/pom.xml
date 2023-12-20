@@ -19,7 +19,6 @@
         <consul_version>1.4.5</consul_version>
         <contiperf_version>2.3.4</contiperf_version>
         <curator_version>4.0.1</curator_version>
-        <fastjson2_version>2.0.7</fastjson2_version>
         <hessian_version>4.0.65</hessian_version>
         <jackson_version>2.15.3</jackson_version>
         <jakarta_annotation_version>2.1.1</jakarta_annotation_version>
@@ -28,7 +27,7 @@
         <junit_version>4.13.2</junit_version>
         <kryo_serializers_version>0.45</kryo_serializers_version>
         <kryo_version>5.3.0</kryo_version>
-        <logback_version>1.2.6</logback_version>
+        <logback_version>1.4.11</logback_version>
         <luix_commons_version>1.2.3.4</luix_commons_version>
         <luix_springboot3_version>1.2.2.9</luix_springboot3_version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -52,11 +51,6 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback_version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.fastjson2</groupId>
-                <artifactId>fastjson2</artifactId>
-                <version>${fastjson2_version}</version>
             </dependency>
             <dependency>
                 <groupId>com.caucho</groupId>
