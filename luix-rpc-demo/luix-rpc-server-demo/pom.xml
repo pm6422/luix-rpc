@@ -8,7 +8,7 @@
         <relativePath/>
     </parent>
     <groupId>com.luixtech</groupId>
-    <artifactId>luix-rpc-demo-client</artifactId>
+    <artifactId>luix-rpc-server-demo</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
@@ -23,7 +23,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.version>3.6.2</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>com.luixtech.rpc.democlient.LuixRpcDemoClientApplication</start-class>
+        <start-class>com.luixtech.rpc.demoserver.LuixRpcDemoServerApplication</start-class>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -52,14 +52,21 @@
             <artifactId>luix-springboot3-framework</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.databene</groupId>
-            <artifactId>contiperf</artifactId>
-            <scope>test</scope>
+            <groupId>com.turkraft</groupId>
+            <artifactId>spring-filter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
     </dependencies>
     <build>

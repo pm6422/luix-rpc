@@ -2,12 +2,12 @@
 name: luix
 services:
   rpc-server-demo:
-    image: luix-rpc-demo-server
+    image: luix-rpc-server-demo
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=dev
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/luix-rpc-demo-server
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/luix-rpc-server-demo
       - LUIX_RPC_REGISTRY_HOST=consul
     ports:
       - 127.0.0.1:6010:6010
@@ -24,7 +24,7 @@ services:
       mongodb:
         condition: service_healthy
   rpc-client-demo:
-    image: luix-rpc-demo-client
+    image: luix-rpc-client-demo
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=dev

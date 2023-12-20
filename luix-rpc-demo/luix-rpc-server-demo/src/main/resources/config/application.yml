@@ -7,8 +7,8 @@
 # https://docs.spring.io/spring-boot/docs/2.7.1/reference/html/application-properties.html#application-properties
 # ===================================================================
 app:
-    id: luix-rpc-demo-server
-    name: luix-rpc-demo-server
+    id: luix-rpc-server-demo
+    name: luix-rpc-server-demo
     version: 1.0.0
     package: com.luixtech.rpc.demoserver
     companyName: Infinity Organization

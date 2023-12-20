@@ -11,8 +11,8 @@
     <name>${project.artifactId}</name>
     <modules>
         <module>luix-rpc-demo-common</module>
-        <module>luix-rpc-demo-server</module>
-        <module>luix-rpc-demo-client</module>
+        <module>luix-rpc-server-demo</module>
+        <module>luix-rpc-client-demo</module>
     </modules>
     <properties>
         <java.version>21</java.version>
