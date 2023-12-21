@@ -74,9 +74,6 @@ spring:
         password: LoU-UHR-9dH-8G9-F3G
     banner:
         location: classpath:config/banner-company.txt
-    mongodb:
-        embedded:
-            version: 4.0.0
     data:
         mongodb:
             auto-index-creation: false
