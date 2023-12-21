@@ -26,11 +26,21 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <start-class>com.luixtech.rpc.portal.LuixRpcPortalApplication</start-class>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>luix-rpc</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>com.luixtech</groupId>
             <artifactId>luix-springboot3-framework</artifactId>
-            <version>1.2.2.9</version>
         </dependency>
     </dependencies>
     <build>
