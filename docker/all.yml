@@ -3,6 +3,7 @@ name: luix
 services:
   rpc-server-demo:
     image: luix-rpc-server-demo
+    container_name: luix-rpc-server-demo
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=dev
@@ -25,6 +26,7 @@ services:
         condition: service_healthy
   rpc-client-demo:
     image: luix-rpc-client-demo
+    container_name: luix-rpc-client-demo
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=dev
