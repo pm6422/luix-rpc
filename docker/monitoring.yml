@@ -2,6 +2,7 @@ name: luix
 services:
   prometheus:
     image: prom/prometheus:v2.31.1
+    container_name: prometheus
     volumes:
       - ./prometheus/:/etc/prometheus/
     command:
@@ -14,6 +15,7 @@ services:
 #    network_mode: 'host' # to test locally running service
   grafana:
     image: grafana/grafana:8.2.4
+    container_name: grafana
     volumes:
       - ./grafana/provisioning/:/etc/grafana/provisioning/
     environment:

@@ -2,6 +2,7 @@ name: luix
 services:
   sonar-docker:
     image: sonarqube:9.2.4-community
+    container_name: sonarqube
     # Authentication is turned off for out of the box experience while trying out SonarQube
     # For real use cases delete sonar.forceAuthentication variable or set sonar.forceAuthentication=true
     environment:
