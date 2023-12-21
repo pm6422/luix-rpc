@@ -89,7 +89,7 @@ public class RegistryConfig implements Configurable {
     public void checkValidity() {
         Optional.ofNullable(RegistryFactory.getInstance(name))
                 .orElseThrow(() -> new RpcConfigException("Failed to load the registry factory, " +
-                        "please check whether the dependency [rpc-registry-" + name + "] is in your class path!"));
+                        "please check whether the dependency [luix-rpc-registry-" + name + "] is in your class path!"));
 
 
     }

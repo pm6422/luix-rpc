@@ -6,12 +6,12 @@ import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.domain.User;
 import com.luixtech.rpc.webcenter.domain.UserAuthority;
 import com.luixtech.rpc.webcenter.dto.UsernameAndPasswordDTO;
-import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
-import com.luixtech.rpc.webcenter.exception.DuplicationException;
 import com.luixtech.rpc.webcenter.repository.UserAuthorityRepository;
 import com.luixtech.rpc.webcenter.repository.UserRepository;
 import com.luixtech.rpc.webcenter.service.UserService;
 import com.luixtech.rpc.webcenter.utils.RandomUtils;
+import com.luixtech.utilities.exception.DataNotFoundException;
+import com.luixtech.utilities.exception.DuplicationException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,8 +33,8 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl implements UserService {
     private final UserRepository          userRepository;
     private final UserAuthorityRepository userAuthorityRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final MessageCreator  messageCreator;
+    private final PasswordEncoder         passwordEncoder;
+    private final MessageCreator          messageCreator;
 
     // private void removeUserToken(User user) {
     // String clientId =

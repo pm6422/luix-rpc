@@ -13,10 +13,13 @@ app:
     package: com.luixtech.rpc.webcenter
     companyName: Infinity Organization
 management: # Management http server configuration, used by ManagementServerProperties
+    health:
+        mongo:
+            enabled: true
     endpoints:
         web:
             base-path: /management
-            exposure: # Refer to https://docs.spring.io/spring-boot/docs/3.2.0/reference/html/application-properties.html#application-properties.actuator
+            exposure:
                 include:
                     - configprops
                     - env
@@ -38,42 +41,14 @@ management: # Management http server configuration, used by ManagementServerProp
             enabled: true
         shutdown:
             enabled: true # explicitly enable
-    health:
-        mail:
-            enabled: true
-        mongo:
-            enabled: true
-    metrics:
-        export:
-            prometheus: # Prometheus is the default metrics backend
-                enabled: true
-                step: 60
-        enable:
-            http: true
-            jvm: true
-            logback: true
-            process: true
-            system: true
-        distribution:
-            percentiles-histogram:
-                all: true
-            percentiles:
-                all: 0, 0.5, 0.75, 0.95, 0.99, 1.0
-        tags:
-            application: ${spring.application.name}
-        web:
-            server:
-                request:
-                    autotime:
-                        enabled: true
 spring:
     application:
         name: ${app.id}
     profiles:
         # It can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
-        active: dev
+        active: test
     messages:
-        basename: i18n/messages
+        basename: i18n/messages,i18n/luix-messages
         fallback-to-system-locale: false
     task:
         execution:
@@ -120,6 +95,9 @@ logging:
     config: classpath:config/logback-spring.xml
     level:
         root: INFO
+# ===================================================================
+# Luix RPC specific properties
+# ===================================================================
 luix-rpc:
     application:
         id: ${spring.application.name}

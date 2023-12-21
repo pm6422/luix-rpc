@@ -2,11 +2,11 @@ package com.luixtech.rpc.webcenter.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.luixtech.rpc.webcenter.domain.Authority;
-import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
-import com.luixtech.rpc.webcenter.exception.DuplicationException;
 import com.luixtech.rpc.webcenter.repository.AuthorityRepository;
 import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import com.luixtech.springbootframework.component.HttpHeaderCreator;
+import com.luixtech.utilities.exception.DataNotFoundException;
+import com.luixtech.utilities.exception.DuplicationException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;

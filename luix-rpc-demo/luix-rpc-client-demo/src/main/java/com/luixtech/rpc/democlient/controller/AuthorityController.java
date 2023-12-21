@@ -2,9 +2,9 @@ package com.luixtech.rpc.democlient.controller;
 
 import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import com.luixtech.rpc.core.client.annotation.RpcConsumer;
-import com.luixtech.rpc.democlient.exception.DataNotFoundException;
 import com.luixtech.rpc.democommon.domain.Authority;
 import com.luixtech.rpc.democommon.service.AuthorityService;
+import com.luixtech.utilities.exception.DataNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.Resource;

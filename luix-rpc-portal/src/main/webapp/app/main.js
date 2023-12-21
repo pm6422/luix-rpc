@@ -174,26 +174,6 @@ $(document).ready(function () {
     $('.full-height-scroll').slimscroll({
         height: '100%'
     })
-
-    $.get('api/system/luix-demo-server-url', function(result){
-        $('#luix-demo-server-url').val(result);
-    });
-    $.get('api/system/luix-demo-client-url', function(result){
-        $('#luix-demo-client-url').val(result);
-    });
-    $.get('api/system/luix-web-center-url', function(result){
-        $('#luix-web-center-url').val(result);
-    });
-
-    $('#save').click(function () {
-        $.post("api/system/luix-demo-server-url", {url: $('#luix-demo-server-url').val()}, function(result){
-        });
-        $.post("api/system/luix-demo-client-url", {url: $('#luix-demo-client-url').val()}, function(result){
-        });
-        $.post("api/system/luix-web-center-url", {url: $('#luix-web-center-url').val()}, function(result){
-        });
-    });
-
 });
 
 

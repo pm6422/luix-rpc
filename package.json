@@ -8,6 +8,8 @@
     "all:up": "docker compose -f docker/all.yml up --wait",
     "all:down": "docker compose -f docker/all.yml down",
     "docker:build": "./mvnw compile -ntp verify -DskipTests -Prelease",
-    "docker:build:arm64": "npm run docker:build -- -Djib.arch=arm64"
+    "docker:build:arm64": "npm run docker:build -- -Djib.arch=arm64",
+    "docker:push": "npm run docker:build -- -Djib.goal=build",
+    "docker:push:arm64": "npm run docker:push -- -Djib.arch=arm64"
   }
 }

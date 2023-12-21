@@ -2,11 +2,11 @@ package com.luixtech.rpc.webcenter.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luixtech.rpc.webcenter.domain.RpcScheduledTask;
-import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.repository.RpcScheduledTaskRepository;
 import com.luixtech.rpc.webcenter.service.RpcScheduledTaskService;
 import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import com.luixtech.springbootframework.component.HttpHeaderCreator;
+import com.luixtech.utilities.exception.DataNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
