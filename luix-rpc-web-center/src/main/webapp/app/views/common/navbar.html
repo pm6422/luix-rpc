@@ -148,26 +148,26 @@
 <!--                    <li><a ng-click="vm.changeLanguage('en')">English</a></li>-->
 <!--                </ul>-->
 <!--            </li>-->
-            <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_ADMIN">
-                <a class="count-info" href uib-dropdown-toggle>
-                    <span class="fas fa-cog text-navy"></span>&nbsp;
-                    <span class="text-navy">Administration</span>
-                </a>
-                <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
-                    <li ui-sref-active="active">
-                        <a ui-sref="user-authority.authority-list">
-                            <span class="fas fa-user-cog"></span>&nbsp;
-                            <span>Authority</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="user-authority.user-list">
-                            <span class="fas fa-users"></span>&nbsp;
-                            <span>User</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
+<!--            <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_ADMIN">-->
+<!--                <a class="count-info" href uib-dropdown-toggle>-->
+<!--                    <span class="fas fa-cog text-navy"></span>&nbsp;-->
+<!--                    <span class="text-navy">Administration</span>-->
+<!--                </a>-->
+<!--                <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">-->
+<!--                    <li ui-sref-active="active">-->
+<!--                        <a ui-sref="user-authority.authority-list">-->
+<!--                            <span class="fas fa-user-cog"></span>&nbsp;-->
+<!--                            <span>Authority</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li ui-sref-active="active">-->
+<!--                        <a ui-sref="user-authority.user-list">-->
+<!--                            <span class="fas fa-users"></span>&nbsp;-->
+<!--                            <span>User</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </li>-->
             <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_USER">
                 <a class="count-info" href uib-dropdown-toggle>
                     <img alt="image" class="img-circle" style="width:22px" ng-src="{{main.account.profilePhotoUrl}}"
@@ -182,18 +182,18 @@
                             <span>Contact Us</span>
                         </a>
                     </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="profile">
-                            <span class="fas fa-address-card"></span>&nbsp;
-                            <span>Profile</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="password">
-                            <span class="fas fa-key"></span>&nbsp;
-                            <span>Password</span>
-                        </a>
-                    </li>
+<!--                    <li ui-sref-active="active">-->
+<!--                        <a ui-sref="profile">-->
+<!--                            <span class="fas fa-address-card"></span>&nbsp;-->
+<!--                            <span>Profile</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li ui-sref-active="active">-->
+<!--                        <a ui-sref="password">-->
+<!--                            <span class="fas fa-key"></span>&nbsp;-->
+<!--                            <span>Password</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
                     <li>
                         <a ng-click="vm.logout()">
                             <span class="fas fa-sign-out-alt"></span>&nbsp;
