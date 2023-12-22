@@ -1,100 +1,62 @@
 package com.luixtech.rpc.webcenter.controller;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
-import org.springframework.boot.web.error.ErrorAttributeOptions;
-import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.core.OAuth2AuthorizationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Map;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * Basic Controller which is called for unhandled errors
- */
 @Controller
-@AllArgsConstructor
 public class ApplicationErrorController implements ErrorController {
 
-    /**
-     * The error mapping URL
-     */
-    private static final String          ERROR_PATH = "/error";
-    /**
-     * Error Attributes in the Application
-     */
-    private final        ErrorAttributes errorAttributes;
+    private static final Set<String> DEVICE_GRANT_ERRORS = new HashSet<>(Arrays.asList(
+            "authorization_pending",
+            "slow_down",
+            "access_denied",
+            "expired_token"
+    ));
 
-    /**
-     * Returns the path of the error page.
-     *
-     * @return the error path
-     */
-//    @Override
-//    public String getErrorPath() {
-//        return ERROR_PATH;
+    @RequestMapping("/error")
+    public String handleError(Model model, HttpServletRequest request) {
+        String errorMessage = getErrorMessage(request);
+        if (errorMessage.startsWith("[access_denied]")) {
+            model.addAttribute("errorTitle", "Access Denied");
+            model.addAttribute("errorMessage", "You have denied access.");
+        } else {
+            model.addAttribute("errorTitle", "Error");
+            model.addAttribute("errorMessage", errorMessage);
+        }
+        return "error";
+    }
+
+    private String getErrorMessage(HttpServletRequest request) {
+        String errorMessage = (String) request.getAttribute(RequestDispatcher.ERROR_MESSAGE);
+        return StringUtils.hasText(errorMessage) ? errorMessage : "";
+    }
+
+    @ExceptionHandler(OAuth2AuthorizationException.class)
+    public ResponseEntity<OAuth2Error> handleError(OAuth2AuthorizationException ex) {
+        String errorCode = ex.getError().getErrorCode();
+        if (DEVICE_GRANT_ERRORS.contains(errorCode)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getError());
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getError());
+    }
+
+//    @ExceptionHandler(WebClientResponseException.class)
+//    public String handleError(Model model, WebClientResponseException ex) {
+//        model.addAttribute("error", ex.getMessage());
+//        return "index";
 //    }
-
-    /**
-     * Supports the HTML Error View
-     *
-     * @param request http servlet request
-     * @return ModelAndView
-     */
-    @RequestMapping(value = ERROR_PATH, produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView errorHtml(HttpServletRequest request) {
-        return new ModelAndView("errors/error", getErrorAttributes(request, false));
-    }
-
-    /**
-     * Supports other formats like JSON, XML
-     *
-     * @param request http servlet request
-     * @return error information
-     */
-    @RequestMapping(value = ERROR_PATH, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {
-        Map<String, Object> body = getErrorAttributes(request, getTraceParameter(request));
-        HttpStatus status = getStatus(request);
-        return new ResponseEntity<>(body, status);
-    }
-
-    private boolean getTraceParameter(HttpServletRequest request) {
-        String parameter = request.getParameter("trace");
-        if (parameter == null) {
-            return false;
-        }
-        return !"false".equalsIgnoreCase(parameter);
-    }
-
-    private Map<String, Object> getErrorAttributes(HttpServletRequest request, boolean includeStackTrace) {
-        WebRequest requestAttributes = new ServletWebRequest(request);
-        ErrorAttributeOptions options = ErrorAttributeOptions.of(ErrorAttributeOptions.Include.EXCEPTION,
-                ErrorAttributeOptions.Include.MESSAGE, ErrorAttributeOptions.Include.BINDING_ERRORS);
-        if (includeStackTrace) {
-            options.including(ErrorAttributeOptions.Include.STACK_TRACE);
-        }
-        return this.errorAttributes.getErrorAttributes(requestAttributes, options);
-    }
-
-    private HttpStatus getStatus(HttpServletRequest request) {
-        Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
-        if (statusCode != null) {
-            try {
-                return HttpStatus.valueOf(statusCode);
-            } catch (Exception ex) {
-                // leave blank intentionally
-            }
-        }
-        return HttpStatus.INTERNAL_SERVER_ERROR;
-    }
 }

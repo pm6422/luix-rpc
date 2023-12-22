@@ -77,6 +77,21 @@ spring:
             pageable:
                 one-indexed-parameters: false # whether to expose and assume 1-based page number indexes
                 max-page-size: 2000
+    security:
+        oauth2:
+            client:
+                provider:
+                    spring:
+                        issuer-uri: https://passport.luixtech.cn
+                registration:
+                    messaging-client-oidc:
+                        provider: spring
+                        client-id: messaging-client
+                        client-name: messaging-client-oidc
+                        client-secret: secret
+                        authorization-grant-type: authorization_code
+                        redirect-uri: "http://127.0.0.1:4003/login/oauth2/code/{registrationId}"
+                        scope: openid, profile
 server:
     # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
     port: 4003

@@ -16,6 +16,7 @@
     <url>http://www.luixtech.cn</url>
     <properties>
         <assertj_version>3.24.0</assertj_version>
+        <bootstrap_version>5.3.2</bootstrap_version>
         <consul_version>1.4.5</consul_version>
         <contiperf_version>2.3.4</contiperf_version>
         <curator_version>4.0.1</curator_version>
@@ -207,6 +208,11 @@
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-mongodb</artifactId>
                 <version>${spring_data_mongodb_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>bootstrap</artifactId>
+                <version>${bootstrap_version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
