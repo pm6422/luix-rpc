@@ -915,7 +915,7 @@ function PrincipalService($q, $http, AccountService, TrackerService) {
 
         // retrieve the identity data from the server, update the identity object, and then resolve.
 //      AccountService.get({}, getAccountThen, getAccountCatch);
-        $http.get('open-api/accounts/user').then(function (response) {
+        $http.get('/open-api/accounts/user').then(function (response) {
             if (response.data && response.data.username) {
                 getAccountThen(response);
             } else {
@@ -927,7 +927,7 @@ function PrincipalService($q, $http, AccountService, TrackerService) {
             _identity = response.data;
             _authenticated = true;
             deferred.resolve(_identity);
-            TrackerService.connect();
+            // TrackerService.connect();
         }
 
         function getAccountCatch() {
@@ -1020,7 +1020,7 @@ function AuthenticationService($rootScope, $state, $sessionStorage, $q, $locatio
 
             // an authenticated user can't access to login and register pages
 //            if (isAuthenticated && $rootScope.toState.parent === 'account' && ($rootScope.toState.name === 'login' || $rootScope.toState.name === 'register')) {
-            if (isAuthenticated && ($rootScope.toState.name === 'login' || $rootScope.toState.name === 'register')) {
+            if (isAuthenticated && ($rootScope.toState.name === 'dashboard')) {
                 // redirect to dashboard
                 $location.path('/');
             }
@@ -1052,7 +1052,7 @@ function AuthenticationService($rootScope, $state, $sessionStorage, $q, $locatio
             if ($rootScope.toState.data.authorities && $rootScope.toState.data.authorities.length > 0 && !PrincipalService.hasAnyAuthority($rootScope.toState.data.authorities)) {
                 if (isAuthenticated) {
                     // user is signed in but not authorized for desired state
-                    $state.go('accessdenied');
+                    // $state.go('accessdenied');
                 }
                 else {
                     // user is not authenticated. stow the state they wanted before you

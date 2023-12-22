@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class HomeController {
-    @RequestMapping(value = {"/", "/index"})
-    public String index(Model model) {
-        // todo: refactor
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
-            model.addAttribute("username", oidcUser.getName());
-        }
-        return "index";
-    }
+//    @RequestMapping(value = {"/", "/index"})
+//    public String index(Model model) {
+//        // todo: refactor
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
+//            model.addAttribute("username", oidcUser.getName());
+//        }
+//        return "index";
+//    }
 
     @GetMapping("/logged-out")
     public String loggedOut() {
