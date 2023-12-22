@@ -1,6 +1,7 @@
 package com.luixtech.rpc.webcenter.config;
 
 import com.luixtech.rpc.webcenter.authorization.DeviceCodeOAuth2AuthorizedClientProvider;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
@@ -13,14 +14,16 @@ import org.springframework.security.oauth2.client.web.reactive.function.client.S
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
+@AllArgsConstructor
 public class HttpClientConfiguration {
+    private final ApplicationProperties applicationProperties;
 
     @Bean
     public WebClient webClient(OAuth2AuthorizedClientManager authorizedClientManager) {
         ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2Client =
                 new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
         // @formatter:off
-		return WebClient.builder()
+		return WebClient.builder().baseUrl(applicationProperties.getUrl().getAuthServerUrl())
 				.apply(oauth2Client.oauth2Configuration())
 				.build();
 		// @formatter:on

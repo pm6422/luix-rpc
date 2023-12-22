@@ -32,7 +32,10 @@ public class AccountController {
         if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
             ProfileScopeUser user = this.webClient
                     .get()
-                    .uri(applicationProperties.getUrl().getAuthServerUserUrl() + "/" + oidcUser.getName())
+                    .uri(uriBuilder -> uriBuilder
+                            .path(applicationProperties.getUrl().getAuthServerUserUrl())
+                            .queryParam("username", oidcUser.getName())
+                            .build())
                     .attributes(clientRegistrationId("messaging-client-oidc"))
                     .retrieve()
                     .bodyToMono(ProfileScopeUser.class)
