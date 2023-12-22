@@ -989,7 +989,7 @@ function AuthServerService($http, $localStorage, $sessionStorage) {
     }
 
     function logout() {
-        $http.post('api/accounts/logout').then(function () {
+        $http.post('/logout').then(function () {
             delete $localStorage.authenticationToken;
             delete $sessionStorage.authenticationToken;
             delete $sessionStorage.selectedRegistryIdentity;
@@ -1032,23 +1032,6 @@ function AuthenticationService($rootScope, $state, $sessionStorage, $q, $locatio
                 $state.go(previousState.name, previousState.params);
             }
 
-//            if ($rootScope.toState.data.authorities && $rootScope.toState.data.authorities.length > 0 && !PrincipalService.hasAnyAuthority($rootScope.toState.data.authorities)) {
-//                if (isAuthenticated) {
-//                    // user is signed in but not authorized for desired state
-//                    $state.go('accessdenied');
-//                }
-//                else {
-//                    // user is not authenticated. stow the state they wanted before you
-//                    // send them to the login service, so you can return them when you're done
-//                    storePreviousState($rootScope.toState.name, $rootScope.toStateParams);
-//
-//                    // now, send them to the signin state so they can log in
-//                    $state.go('accessdenied').then(function() {
-//                        LoginService.open();
-//                    });
-//                }
-//            }
-
             if ($rootScope.toState.data.authorities && $rootScope.toState.data.authorities.length > 0 && !PrincipalService.hasAnyAuthority($rootScope.toState.data.authorities)) {
                 if (isAuthenticated) {
                     // user is signed in but not authorized for desired state
@@ -1061,7 +1044,9 @@ function AuthenticationService($rootScope, $state, $sessionStorage, $q, $locatio
 
                     // now, send them to the signin state so they can log in
                     $state.go('accessdenied').then(function () {
-                        $state.go('login');
+                        // $state.go('login');
+                        // window.location.href = '/login';
+                        // AuthServerService.logout();
                     });
                 }
             }
