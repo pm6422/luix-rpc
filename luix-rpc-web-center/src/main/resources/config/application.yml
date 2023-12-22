@@ -82,7 +82,7 @@ spring:
             client:
                 provider:
                     spring:
-                        issuer-uri: https://passport.luixtech.cn
+                        issuer-uri: http://127.0.0.1:4001
                 registration:
                     messaging-client-oidc:
                         provider: spring
