@@ -1050,7 +1050,7 @@ function httpConfig($urlRouterProvider, $httpProvider, httpRequestInterceptorCac
 
     $httpProvider.interceptors.push('alertErrorHandlerInterceptor');
     $httpProvider.interceptors.push('authExpiredInterceptor');
-    $httpProvider.interceptors.push('authInterceptor');
+    // $httpProvider.interceptors.push('authInterceptor');
     $httpProvider.interceptors.push('alertHandlerInterceptor');
 
     $urlMatcherFactoryProvider.type('boolean', {
