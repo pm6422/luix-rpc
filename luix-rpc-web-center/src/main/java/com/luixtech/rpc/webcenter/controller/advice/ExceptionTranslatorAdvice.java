@@ -1,254 +1,206 @@
 package com.luixtech.rpc.webcenter.controller.advice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.luixtech.springbootframework.component.MessageCreator;
-import com.luixtech.rpc.webcenter.dto.ErrorDTO;
-import com.luixtech.utilities.exception.DataNotFoundException;
-import com.luixtech.utilities.exception.DuplicationException;
-import com.luixtech.utilities.exception.NoAuthorityException;
-import jakarta.servlet.http.HttpServletRequest;
+import com.luixtech.utilities.exception.*;
+import com.luixtech.utilities.response.Result;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import jakarta.validation.ConstraintViolationException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controller advice to translate the server side exceptions to client-friendly json structures.
  * <p>
  * Exception list refer to {@link org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler}
  */
+@Slf4j
 @ControllerAdvice
 @AllArgsConstructor
-@Slf4j
 public class ExceptionTranslatorAdvice {
-
-    public static final String         ILLEGAL_REQUEST_ARG_CODE   = "EP5000";
-    public static final String         NO_DATA_FOUND_CODE         = "EP5002";
-    public static final String         NO_AUTH_CODE               = "EP5011";
-    public static final String         ACCESS_DENIED_CODE         = "EP5030";
-    public static final String         DUPLICATED_DATA_CODE       = "EP5101";
-    public static final String         SYS_ERROR_CODE             = "ES7000";
-    public static final String         SYS_EXCEPTION_CODE         = "ES7001";
-    public static final String         CONCURRENCY_EXCEPTION_CODE = "ES7002";
-    private final       MessageCreator messageCreator;
+    private static final String         ILLEGAL_ARGUMENTS_LOG = "Found illegal request arguments: ";
+    private final        MessageCreator messageCreator;
 
     /**
      * JSR 303 bean validation exception handler
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.warn("Found illegal request arguments: {}", ex.getMessage());
+    public ResponseEntity<Result<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        log.warn(ILLEGAL_ARGUMENTS_LOG, ex);
+        List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
+        String msg = objectErrors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(","));
         // Http status: 400
-        return ResponseEntity.badRequest().body(processFieldErrors(ex.getBindingResult().getFieldErrors()));
+        return ResponseEntity.badRequest().body(Result.illegalArgument(msg));
     }
 
     @ExceptionHandler(BindException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processBindException(BindException ex) {
-        log.warn("Found illegal request arguments: {}", ex.getMessage());
+    public ResponseEntity<Result<Void>> handleBindException(BindException ex) {
+        log.warn(ILLEGAL_ARGUMENTS_LOG, ex);
+        String warnMessage = handleFieldErrors(ex.getBindingResult().getFieldErrors());
         // Http status: 400
-        return ResponseEntity.badRequest().body(processFieldErrors(ex.getBindingResult().getFieldErrors()));
+        return ResponseEntity.badRequest().body(Result.illegalArgument(warnMessage));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processIllegalArgumentException(IllegalArgumentException ex) {
-        log.warn("Found illegal request arguments: {}", ex.getMessage());
+    public ResponseEntity<Result<Void>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.warn(ILLEGAL_ARGUMENTS_LOG, ex);
         // Http status: 400
-        return ResponseEntity.badRequest().body(ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(ex.getMessage()).build());
+        return ResponseEntity.badRequest().body(Result.illegalArgument(ex.getMessage()));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        log.warn("Found illegal request arguments: {}", ex.getMessage());
+    public ResponseEntity<Result<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        log.warn(ILLEGAL_ARGUMENTS_LOG, ex);
         // Http status: 400
-        return ResponseEntity.badRequest().body(ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(ex.getMessage()).build());
+        return ResponseEntity.badRequest().body(Result.illegalArgument(ex.getMessage()));
     }
 
     @ExceptionHandler(MismatchedInputException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processMismatchedInputException(MismatchedInputException ex) {
-        log.warn("Found illegal request arguments: {}", ex.getMessage());
+    public ResponseEntity<Result<Void>> handleMismatchedInputException(MismatchedInputException ex) {
+        log.warn(ILLEGAL_ARGUMENTS_LOG, ex);
         // Http status: 400
-        return ResponseEntity.badRequest().body(ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(ex.getMessage()).build());
+        return ResponseEntity.badRequest().body(Result.illegalArgument(ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        log.warn("Found mismatched type request arguments: {}", ex.getMessage());
+    public ResponseEntity<Result<Void>> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        log.warn(ILLEGAL_ARGUMENTS_LOG, ex);
         // Http status: 400
-        return ResponseEntity.badRequest().body(ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(ex.getMessage()).build());
+        return ResponseEntity.badRequest().body(Result.illegalArgument(ex.getMessage()));
     }
 
     @ExceptionHandler(NumberFormatException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processNumberFormatException(NumberFormatException ex) {
-        log.warn("Found illegal request arguments: {}", ex.getMessage());
+    public ResponseEntity<Result<Void>> handleNumberFormatException(NumberFormatException ex) {
+        log.warn(ILLEGAL_ARGUMENTS_LOG, ex);
         // Http status: 400
-        return ResponseEntity.badRequest().body(ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(ex.getMessage()).build());
+        return ResponseEntity.badRequest().body(Result.illegalArgument(ex.getMessage()));
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
-        log.warn("Found illegal request arguments: {}", ex.getMessage());
+    public ResponseEntity<Result<Void>> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        log.warn(ILLEGAL_ARGUMENTS_LOG, ex);
         // Http status: 400
-        return ResponseEntity.badRequest().body(ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(ex.getMessage()).build());
+        return ResponseEntity.badRequest().body(Result.illegalArgument(ex.getMessage()));
     }
+
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processConstraintViolationException(ConstraintViolationException ex) {
-        log.warn("Found illegal request arguments: {}", ex.getMessage());
+    public ResponseEntity<Result<Void>> handleConstraintViolationException(ConstraintViolationException ex) {
+        log.warn(ILLEGAL_ARGUMENTS_LOG, ex);
         // Http status: 400
-        return ResponseEntity.badRequest().body(ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(ex.getMessage()).build());
-    }
-
-    @ExceptionHandler(NoAuthorityException.class)
-    @ResponseBody
-    public ResponseEntity<ErrorDTO> processNoAuthorityException(NoAuthorityException ex) {
-        log.warn("No authority: ", ex);
-        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(NO_AUTH_CODE, ex.getUsername())).build();
-        // Http status: 400
-        return ResponseEntity.badRequest().body(error);
-    }
-
-    @ExceptionHandler(InternalAuthenticationServiceException.class)
-    @ResponseBody
-    public ResponseEntity<ErrorDTO> processInternalAuthenticationServiceException(InternalAuthenticationServiceException ex) {
-        log.warn(ex.getMessage());
-        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(NO_AUTH_CODE, ex.getMessage())).build();
-        // Http status: 400
-        return ResponseEntity.badRequest().body(error);
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    @ResponseBody
-    public ResponseEntity<ErrorDTO> processBadCredentialsException(BadCredentialsException ex) {
-        log.warn(ex.getMessage());
-        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(NO_AUTH_CODE, ex.getMessage())).build();
-        // Http status: 400
-        return ResponseEntity.badRequest().body(error);
-    }
-
-    @ExceptionHandler(InsufficientAuthenticationException.class)
-    @ResponseBody
-    public ResponseEntity<ErrorDTO> processInsufficientAuthenticationException(InsufficientAuthenticationException ex) {
-        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = servletRequestAttributes != null ? servletRequestAttributes.getRequest() : null;
-        String msg = request != null ? ex.getMessage() + ": " + request.getRequestURI() : ex.getMessage();
-        log.warn(msg);
-        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(NO_AUTH_CODE, msg)).build();
-        // Http status: 400
-        return ResponseEntity.badRequest().body(error);
+        return ResponseEntity.badRequest().body(Result.illegalArgument(ex.getMessage()));
     }
 
     @ExceptionHandler(DuplicationException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processDuplicationException(DuplicationException ex) {
-        log.warn("Found illegal request arguments: {}", ex.getMessage());
+    public ResponseEntity<Result<Void>> handleDuplicationException(DuplicationException ex) {
+        log.warn(ILLEGAL_ARGUMENTS_LOG, ex);
         // Http status: 400
-
-        String jsonString = "";
-        try {
-            jsonString = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(ex.getFieldMap());
-        } catch (JsonProcessingException e) {
-            log.error("Failed to serialize to json string!", e);
-        }
-        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(DUPLICATED_DATA_CODE, jsonString)).build();
-        return ResponseEntity.badRequest().body(error);
+        String message = messageCreator.getMessage("IA1101", ex.getFieldMap());
+        return ResponseEntity.badRequest().body(Result.illegalArgument(message));
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler(BadCredentialsException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processAccessDeniedException(AccessDeniedException ex) {
-        log.warn("Access denied: ", ex);
-        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(ACCESS_DENIED_CODE)).build();
-        // Http status: 403
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    public ResponseEntity<Result<Void>> handleIncorrectCredentialsException(BadCredentialsException ex) {
+        log.warn("Incorrect user credentials: {}", ex.getMessage());
+        String message = messageCreator.getMessage("UE5006");
+        return ResponseEntity.badRequest().body(Result.illegalArgument(message));
     }
 
     @ExceptionHandler(DataNotFoundException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processNoDataFoundException(DataNotFoundException ex) {
-        log.warn("No data found: ", ex);
-        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(NO_DATA_FOUND_CODE, ex.getId())).build();
+    public ResponseEntity<Result<Void>> handleDataNotFoundException(DataNotFoundException ex) {
+        log.warn("Data not found: ", ex);
         // Http status: 404
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        String message = messageCreator.getMessage("IA1002", ex.getId());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Result.dataNotFound(message));
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
-        log.warn("Found unsupported http method: ", ex);
+    public ResponseEntity<Result<Void>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        log.warn("Found invalid request method: ", ex);
         // Http status: 405
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(ex.getMessage()).build());
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(Result.illegalArgument(ex.getMessage()));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity<Result<Void>> handleUserNotFoundException(UserNotFoundException ex) {
+        log.warn("User not found: ", ex);
+        String message = messageCreator.getMessage("UE1002", ex.getUsername());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @ExceptionHandler(ConcurrencyFailureException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processConcurrencyException(ConcurrencyFailureException ex) {
-        log.warn("Found concurrency exception: ", ex);
-        ErrorDTO error = ErrorDTO.builder().code(SYS_ERROR_CODE).message(messageCreator.getMessage(CONCURRENCY_EXCEPTION_CODE)).build();
+    public ResponseEntity<Result<Void>> handleConcurrencyFailureException(ConcurrencyFailureException ex) {
+        log.error("Found concurrency exception: ", ex);
         // Http status: 409
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Result.serverError(ex.getMessage()));
+    }
+
+    @ExceptionHandler(BizIllegalParamException.class)
+    @ResponseBody
+    public ResponseEntity<Result<Void>> handleBizIllegalParamException(BizIllegalParamException ex) {
+        log.warn("Found BizIllegalParamException: ", ex);
+        // 特意返回 Http status: 200
+        return ResponseEntity.ok().body(Result.illegalArgument(ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvocationTimeoutException.class)
+    @ResponseBody
+    public ResponseEntity<Result<Void>> handleInvocationTimeoutException(InvocationTimeoutException ex) {
+        log.error("Found invocation timeout: ", ex);
+        // Http status: 500
+        String message = messageCreator.getMessage("SE1003", ex.getTimeoutInMs());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Result.invocationTimeout(message));
+    }
+
+    @ExceptionHandler(InvocationException.class)
+    @ResponseBody
+    public ResponseEntity<Result<Void>> handleInvocationErrorException(InvocationException ex) {
+        log.error("Found invocation exception: ", ex);
+        // Http status: 500
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Result.invocationError(ex.getMessage()));
     }
 
     @ExceptionHandler(Throwable.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processException(Throwable throwable) {
-        log.warn("Found exception: ", throwable);
-        ErrorDTO error = ErrorDTO.builder().code(SYS_ERROR_CODE).message(messageCreator.getMessage(SYS_EXCEPTION_CODE)).build();
+    public ResponseEntity<Result<Void>> handleException(Throwable throwable) {
+        log.error("Found exception: ", throwable);
         // Http status: 500
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Result.serverError(throwable.getMessage()));
     }
 
-    private ErrorDTO processFieldErrors(List<FieldError> fieldErrors) {
-        List<ErrorDTO.ErrorField> errorFields = new ArrayList<>();
-        for (FieldError fieldError : fieldErrors) {
-            String defaultMessage = fieldError.getDefaultMessage();
-            if (StringUtils.isEmpty(defaultMessage)
-                    && fieldError.getCodes() != null) {
-                defaultMessage = messageCreator.getMessage(fieldError.getCodes()[0], fieldError.getArguments());
-            }
-            ErrorDTO.ErrorField errorField = ErrorDTO.ErrorField.builder()
-                    .field(fieldError.getField())
-                    .rejectedValue(fieldError.getRejectedValue())
-                    .message(defaultMessage)
-                    .build();
-            errorFields.add(errorField);
-        }
-        return ErrorDTO.builder()
-                .code(ILLEGAL_REQUEST_ARG_CODE)
-                .message(messageCreator.getMessage(ILLEGAL_REQUEST_ARG_CODE))
-                .errorFields(errorFields)
-                .build();
+    private String handleFieldErrors(List<FieldError> fieldErrors) {
+        return fieldErrors.toString();
     }
 }
