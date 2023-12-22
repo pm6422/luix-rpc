@@ -68,10 +68,6 @@ spring:
             enabled: true
             max-file-size: 30MB
             max-request-size: 30MB
-    mail: # specific mail property, used by MailProperties
-        host: smtp.exmail.qq.com
-        username: test@luixtech.cn
-        password: LoU-UHR-9dH-8G9-F3G
     banner:
         location: classpath:config/banner-company.txt
     data:
@@ -95,6 +91,12 @@ logging:
         org.jooq.tools.LoggerListener: DEBUG
         org.springframework.security: DEBUG
         org.springframework.security.oauth2: DEBUG
+springdoc: # https://springdoc.org/#migrating-from-springfox
+    api-docs:
+        enabled: true
+    show-actuator: true
+    swagger-ui:
+        tags-sorter: alpha
 # ===================================================================
 # Luix RPC specific properties
 # ===================================================================
@@ -114,12 +116,6 @@ luix-rpc:
     protocol:
         port: 1${server.port}
         serializer: hessian2
-springdoc: # https://springdoc.org/#migrating-from-springfox
-    api-docs:
-        enabled: true
-    show-actuator: true
-    swagger-ui:
-        tags-sorter: alpha
 # ===================================================================
 # Luix framework specific properties
 # ===================================================================
