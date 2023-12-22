@@ -25,6 +25,7 @@ public class ApplicationProperties {
     private final UserEventAudit    userEventAudit = new UserEventAudit();
     private final Account           account        = new Account();
     private final Security          security       = new Security();
+    private final Url               url            = new Url();
 
     @Data
     public static class UserEventAudit {
@@ -53,5 +54,11 @@ public class ApplicationProperties {
                 private long   tokenValidityInSecondsForRememberMe = 2592000; // 30 days
             }
         }
+    }
+
+    @Data
+    public static class Url {
+        private String authServerUrl;
+        private String authServerUserUrl;
     }
 }
