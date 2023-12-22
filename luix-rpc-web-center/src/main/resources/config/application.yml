@@ -89,9 +89,12 @@ server:
             cookie:
                 http-only: true
 logging:
-    config: classpath:config/logback-spring.xml
     level:
         root: INFO
+        org.springframework.web: INFO
+        org.jooq.tools.LoggerListener: DEBUG
+        org.springframework.security: DEBUG
+        org.springframework.security.oauth2: DEBUG
 # ===================================================================
 # Luix RPC specific properties
 # ===================================================================
