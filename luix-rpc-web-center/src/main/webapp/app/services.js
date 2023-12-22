@@ -1045,7 +1045,7 @@ function AuthenticationService($rootScope, $state, $sessionStorage, $q, $locatio
                     // now, send them to the signin state so they can log in
                     $state.go('accessdenied').then(function () {
                         // $state.go('login');
-                        // window.location.href = '/login';
+                        // window.location.href = '/logged-out';
                         // AuthServerService.logout();
                     });
                 }
