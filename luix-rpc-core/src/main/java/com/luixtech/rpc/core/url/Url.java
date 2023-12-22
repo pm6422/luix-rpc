@@ -30,7 +30,7 @@ public final class Url implements Serializable {
      * URL Pattern
      * <scheme>://<host>:<port>/<path>?<optionKey>=<optionValue>
      * e.g.
-     * luix://172.25.11.79:16010/com.luixtech.rpc.service.AppService?healthChecker=false&requestTimeout=1000
+     * luix://172.25.11.79:14001/com.luixtech.rpc.service.AppService?healthChecker=false&requestTimeout=1000
      *
      * <scheme>=luix|direct
      */

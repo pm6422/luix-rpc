@@ -9,10 +9,10 @@ luix-rpc:
     registry:
         host: 10.10.10.60
         port: 8500
-#        providerAddresses: 127.0.0.1:16010
+#        providerAddresses: 127.0.0.1:14001
 # ===================================================================
 # Application specific properties
 # ===================================================================
 application:
     url:
-        appServiceProviderUrl: 10.10.10.60:16010
+        appServiceProviderUrl: 10.10.10.60:14001

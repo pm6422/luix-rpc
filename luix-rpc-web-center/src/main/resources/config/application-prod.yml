@@ -1,7 +1,7 @@
 spring:
     data:
         mongodb:
-            uri: mongodb://admin:79Gfs87J3YhS23YH@192.168.1.101:36030/${spring.application.name}
+            uri: mongodb://admin:79Gfs87J3YhS23YH@192.168.1.101:34003/${spring.application.name}
 luix-rpc:
     registry:
         host: localhost

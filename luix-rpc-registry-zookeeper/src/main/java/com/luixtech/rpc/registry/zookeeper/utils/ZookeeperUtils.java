@@ -58,7 +58,7 @@ public abstract class ZookeeperUtils {
      *
      * @param zkClient      zk client
      * @param statusDirPath status directory path, e.g. /luix/default/com.luixtech.app.common.service.AppService/active
-     * @param fileNames     address file names list, e.g. 172.25.11.111:16010,172.25.11.222:16010
+     * @param fileNames     address file names list, e.g. 172.25.11.111:14001,172.25.11.222:14001
      * @return provider urls
      */
     public static List<Url> readUrls(ZkClient zkClient, String statusDirPath, List<String> fileNames) {

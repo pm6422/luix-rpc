@@ -11,13 +11,13 @@ services:
       - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/luix-rpc-server-demo
       - LUIX_RPC_REGISTRY_HOST=consul
     ports:
-      - 127.0.0.1:6010:6010
+      - 127.0.0.1:4001:4001
     healthcheck:
       test:
         - CMD
         - curl
         - -f
-        - http://localhost:6010/management/health
+        - http://localhost:4001/management/health
       interval: 5s
       timeout: 5s
       retries: 40
@@ -33,13 +33,13 @@ services:
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
       - LUIX_RPC_REGISTRY_HOST=consul
     ports:
-      - 127.0.0.1:6020:6020
+      - 127.0.0.1:4002:4002
     healthcheck:
       test:
         - CMD
         - curl
         - -f
-        - http://localhost:6020/management/health
+        - http://localhost:4002/management/health
       interval: 5s
       timeout: 5s
       retries: 40

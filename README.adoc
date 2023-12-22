@@ -74,9 +74,9 @@ npm run all:up
 
 [[app_urls]]
 == Application URLs
-* Navigate to `http://127.0.0.1:6010` to access LUIX RPC server demo
-* Navigate to `http://127.0.0.1:6020` to access LUIX RPC client demo
-* Navigate to `http://127.0.0.1:6030` to access LUIX RPC Web Center
+* Navigate to `http://127.0.0.1:4001` to access LUIX RPC server demo
+* Navigate to `http://127.0.0.1:4002` to access LUIX RPC client demo
+* Navigate to `http://127.0.0.1:4003` to access LUIX RPC Web Center
 
 |===
 |Username |Password |Authorities

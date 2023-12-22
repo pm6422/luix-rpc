@@ -14,4 +14,4 @@ luix-rpc:
 # ===================================================================
 application:
     url:
-        appServiceProviderUrl: 127.0.0.1:16010
+        appServiceProviderUrl: 127.0.0.1:14001

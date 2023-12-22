@@ -16,18 +16,18 @@
 //    @Test
 //    @PerfTest(invocations = 10, threads = 16, rampUp = 100, warmUp = 10)
 //    public void blockingResponse() {
-//        restTemplate.getForObject("http://localhost:6010/api/tests/async/blocking-response", String.class);
+//        restTemplate.getForObject("http://localhost:4001/api/tests/async/blocking-response", String.class);
 //    }
 //
 //    @Test
 //    @PerfTest(invocations = 10, threads = 16, rampUp = 100, warmUp = 10)
 //    public void callableResponse() {
-//        restTemplate.getForObject("http://localhost:6010/api/tests/async/callable-response", String.class);
+//        restTemplate.getForObject("http://localhost:4001/api/tests/async/callable-response", String.class);
 //    }
 //
 //    @Test
 //    @PerfTest(invocations = 10, threads = 16, rampUp = 100, warmUp = 10)
 //    public void deferredResult() {
-//        restTemplate.getForObject("http://localhost:6010/api/tests/async/deferred-result", String.class);
+//        restTemplate.getForObject("http://localhost:4001/api/tests/async/deferred-result", String.class);
 //    }
 //}

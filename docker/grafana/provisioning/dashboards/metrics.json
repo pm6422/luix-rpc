@@ -4968,8 +4968,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "host.docker.internal:6020",
-          "value": "host.docker.internal:6020"
+          "text": "host.docker.internal:4002",
+          "value": "host.docker.internal:4002"
         },
         "datasource": "Prometheus",
         "definition": "",

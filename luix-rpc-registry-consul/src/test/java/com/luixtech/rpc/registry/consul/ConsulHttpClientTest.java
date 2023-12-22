@@ -16,7 +16,7 @@ public class ConsulHttpClientTest {
         Url registryUrl = Url.registryUrl(REGISTRY_VAL_CONSUL, "localhost", 8500);
         ConsulHttpClient consulClient = new ConsulHttpClient("localhost", 8500);
         consulRegistry = new ConsulRegistry(registryUrl, consulClient);
-        provider1 = Url.valueOf("luix://10.10.10.118:16010/com.luixtech.rpc.democommon.service.AppAuthorityService?app=luix-demo-server&serializer=hessian2&type=provider");
+        provider1 = Url.valueOf("luix://10.10.10.118:14001/com.luixtech.rpc.democommon.service.AppAuthorityService?app=luix-demo-server&serializer=hessian2&type=provider");
     }
 
     @Test
