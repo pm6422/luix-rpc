@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.security.Principal;
 import java.util.Map;
 
 import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
@@ -42,7 +44,10 @@ public class AccountController {
 
     @Operation(summary = "get authenticated user")
     @GetMapping("/open-api/accounts/user")
-    public ResponseEntity<ProfileScopeUser> getUser() {
+    public ResponseEntity<ProfileScopeUser> getUser(Principal principal) {
+        if (principal instanceof AbstractAuthenticationToken token) {
+            System.out.println(token);
+        }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
             ProfileScopeUser user = this.webClient
@@ -63,11 +68,10 @@ public class AccountController {
     @Operation(summary = "logout")
     @PostMapping("/api/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
-        StringBuilder logoutUrl = new StringBuilder();
-        logoutUrl.append(this.registration.getProviderDetails().getConfigurationMetadata().get("end_session_endpoint").toString());
-        logoutUrl.append("?id_token_hint=").append(idToken.getTokenValue());
-        logoutUrl.append("&post_logout_redirect_uri=").append(request.getHeader(HttpHeaders.ORIGIN));
+        String logoutUrl = this.registration.getProviderDetails().getConfigurationMetadata().get("end_session_endpoint").toString() +
+                "?id_token_hint=" + idToken.getTokenValue() +
+                "&client_id=" + this.registration.getClientId();
         request.getSession().invalidate();
-        return ResponseEntity.ok().body(Map.of("logoutUrl", logoutUrl.toString()));
+        return ResponseEntity.ok().body(Map.of("logoutUrl", logoutUrl));
     }
 }

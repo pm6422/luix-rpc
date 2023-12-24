@@ -989,7 +989,8 @@ function AuthServerService($http, $localStorage, $sessionStorage) {
     }
 
     function logout() {
-        $http.post('/api/logout').then(function () {
+        $http.post('/api/logout').then(function (response) {
+            window.location.href = response.data.logoutUrl;
             // delete $localStorage.authenticationToken;
             // delete $sessionStorage.authenticationToken;
             // delete $sessionStorage.selectedRegistryIdentity;
