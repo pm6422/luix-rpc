@@ -25,7 +25,6 @@ public class WebServerSecurityConfiguration {
 			.authorizeHttpRequests(authorize ->
 				authorize
 					.requestMatchers("favicon.ico").permitAll()
-					.requestMatchers("/logged-out").permitAll()
 					.requestMatchers("/management/health/**").permitAll()
 					.anyRequest().authenticated()
 			)

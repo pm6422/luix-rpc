@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.security.Principal;
 import java.util.Map;
@@ -68,10 +69,12 @@ public class AccountController {
     @Operation(summary = "logout")
     @PostMapping("/api/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
-        String logoutUrl = this.registration.getProviderDetails().getConfigurationMetadata().get("end_session_endpoint").toString() +
-                "?id_token_hint=" + idToken.getTokenValue() +
-                "&client_id=" + this.registration.getClientId() +
-                "&post_logout_redirect_uri=" + request.getHeader(HttpHeaders.ORIGIN);
+        String logoutUrl = UriComponentsBuilder.fromHttpUrl(this.registration.getProviderDetails().getConfigurationMetadata().get("end_session_endpoint").toString())
+                .queryParam("id_token_hint", idToken.getTokenValue())
+                .queryParam("client_id", this.registration.getClientId())
+                .queryParam("post_logout_redirect_uri", request.getHeader(HttpHeaders.ORIGIN))
+                .build()
+                .toUriString();
         request.getSession().invalidate();
         return ResponseEntity.ok().body(Map.of("logoutUrl", logoutUrl));
     }
