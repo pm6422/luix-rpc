@@ -70,7 +70,8 @@ public class AccountController {
     public ResponseEntity<?> logout(HttpServletRequest request, @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
         String logoutUrl = this.registration.getProviderDetails().getConfigurationMetadata().get("end_session_endpoint").toString() +
                 "?id_token_hint=" + idToken.getTokenValue() +
-                "&client_id=" + this.registration.getClientId();
+                "&client_id=" + this.registration.getClientId() +
+                "&post_logout_redirect_uri=" + request.getHeader(HttpHeaders.ORIGIN);
         request.getSession().invalidate();
         return ResponseEntity.ok().body(Map.of("logoutUrl", logoutUrl));
     }

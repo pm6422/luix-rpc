@@ -82,12 +82,12 @@ spring:
             client:
                 provider:
                     spring:
-                        issuer-uri: https://passport.luixtech.cn
+                        issuer-uri: http://127.0.0.1:4001
                 registration:
                     messaging-client-oidc:
                         provider: spring
-                        client-id: messaging-client
-                        client-name: messaging-client-oidc
+                        client-id: vue-client
+                        client-name: VUE Client
                         client-secret: secret
                         authorization-grant-type: authorization_code
                         redirect-uri: "http://127.0.0.1:4003/login/oauth2/code/{registrationId}"
@@ -193,5 +193,5 @@ application:
                 token-validity-in-seconds: 86400
                 token-validity-in-seconds-for-remember-me: 2592000
     url:
-        auth-server-url: https://passport.luixtech.cn
+        auth-server-url: http://127.0.0.1:4001
         auth-server-user-url: /api/third-party-clients/user
