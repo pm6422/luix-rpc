@@ -206,7 +206,7 @@ function NavbarController($rootScope, $scope, $translate, $state, Authentication
     }
     function logout() {
         AuthenticationService.logout();
-        $state.go('login');
+        // $state.go('accessdenied');
     }
 
     function toggleNavbar() {

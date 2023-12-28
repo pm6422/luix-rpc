@@ -23,7 +23,8 @@ public class HttpClientConfiguration {
         ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2Client =
                 new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
         // @formatter:off
-		return WebClient.builder().baseUrl(applicationProperties.getUrl().getAuthServerUrl())
+		return WebClient.builder()
+                .baseUrl(applicationProperties.getUrl().getAuthServerUrl())
 				.apply(oauth2Client.oauth2Configuration())
 				.build();
 		// @formatter:on

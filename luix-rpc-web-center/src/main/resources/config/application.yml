@@ -84,7 +84,7 @@ spring:
                     spring:
                         issuer-uri: https://passport.luixtech.cn
                 registration:
-                    messaging-client-oidc:
+                    luix-passport-client-oidc:
                         provider: spring
                         client-id: vue-client
                         client-name: VUE Client
