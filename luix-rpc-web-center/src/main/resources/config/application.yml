@@ -82,7 +82,7 @@ spring:
             client:
                 provider:
                     spring:
-                        issuer-uri: http://127.0.0.1:4001
+                        issuer-uri: https://passport.luixtech.cn
                 registration:
                     messaging-client-oidc:
                         provider: spring
@@ -193,5 +193,5 @@ application:
                 token-validity-in-seconds: 86400
                 token-validity-in-seconds-for-remember-me: 2592000
     url:
-        auth-server-url: http://127.0.0.1:4001
+        auth-server-url: https://passport.luixtech.cn
         auth-server-user-url: /api/third-party-clients/user
