@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,8 +50,8 @@ public class AccountController {
             if (principal instanceof OAuth2AuthenticationToken authenticationToken) {
                 attributes = authenticationToken.getPrincipal().getAttributes();
                 ProfileScopeUser user = new ProfileScopeUser();
-                user.setUsername(attributes.get("username").toString());
-                user.setEmail(attributes.get("email").toString());
+                user.setUsername(attributes.get(StandardClaimNames.NAME).toString());
+                user.setEmail(attributes.get(StandardClaimNames.EMAIL).toString());
                 user.setAuthorities(Set.copyOf((ArrayList) attributes.get("roles")));
                 return ResponseEntity.ok(user);
             }
