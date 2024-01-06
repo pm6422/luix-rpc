@@ -21,6 +21,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static com.luixtech.rpc.webcenter.config.WebServerSecurityConfiguration.REGISTRATION_ID;
 
@@ -50,7 +51,7 @@ public class AccountController {
                 ProfileScopeUser user = new ProfileScopeUser();
                 user.setUsername(attributes.get("username").toString());
                 user.setEmail(attributes.get("email").toString());
-                user.setAuthorities(new HashSet<>((ArrayList) attributes.get("roles")));
+                user.setAuthorities(Set.copyOf((ArrayList) attributes.get("roles")));
                 return ResponseEntity.ok(user);
             }
 //            else if (principal instanceof JwtAuthenticationToken authenticationToken) {
