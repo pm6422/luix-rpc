@@ -1,6 +1,5 @@
 package com.luixtech.rpc.webcenter.controller;
 
-import com.luixtech.rpc.webcenter.config.ApplicationProperties;
 import com.luixtech.rpc.webcenter.dto.ProfileScopeUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -17,14 +15,14 @@ import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 
 import static com.luixtech.rpc.webcenter.config.WebServerSecurityConfiguration.REGISTRATION_ID;
-import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
 
 /**
  * REST controller for managing the user's account.
@@ -33,8 +31,6 @@ import static org.springframework.security.oauth2.client.web.reactive.function.c
 @Slf4j
 @AllArgsConstructor
 public class AccountController {
-    private final WebClient                    webClient;
-    private final ApplicationProperties        applicationProperties;
     private final ClientRegistrationRepository clientRegistrationRepository;
 
     @Operation(summary = "check if the user is authenticated, and return its login")
@@ -51,16 +47,10 @@ public class AccountController {
         if (principal != null) {
             if (principal instanceof OAuth2AuthenticationToken authenticationToken) {
                 attributes = authenticationToken.getPrincipal().getAttributes();
-                ProfileScopeUser user = this.webClient
-                        .get()
-                        .uri(uriBuilder -> uriBuilder
-                                .path(applicationProperties.getUrl().getAuthServerUserUrl())
-                                .queryParam("username", authenticationToken.getName())
-                                .build())
-                        .attributes(clientRegistrationId(REGISTRATION_ID))
-                        .retrieve()
-                        .bodyToMono(ProfileScopeUser.class)
-                        .block();
+                ProfileScopeUser user = new ProfileScopeUser();
+                user.setUsername(attributes.get("name").toString());
+                user.setEmail(attributes.get("email").toString());
+                user.setAuthorities(new HashSet<>((ArrayList) attributes.get("roles")));
                 return ResponseEntity.ok(user);
             }
 //            else if (principal instanceof JwtAuthenticationToken authenticationToken) {

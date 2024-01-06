@@ -59,6 +59,5 @@ public class ApplicationProperties {
     @Data
     public static class Url {
         private String authServerUrl;
-        private String authServerUserUrl;
     }
 }
