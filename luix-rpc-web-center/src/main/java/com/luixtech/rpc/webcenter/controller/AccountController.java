@@ -49,7 +49,7 @@ public class AccountController {
             if (principal instanceof OAuth2AuthenticationToken authenticationToken) {
                 attributes = authenticationToken.getPrincipal().getAttributes();
                 ProfileScopeUser user = new ProfileScopeUser();
-                user.setUsername(attributes.get("username").toString());
+                user.setUsername(attributes.get("name").toString());
                 user.setEmail(attributes.get("email").toString());
                 user.setAuthorities(Set.copyOf((ArrayList) attributes.get("roles")));
                 return ResponseEntity.ok(user);
