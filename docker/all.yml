@@ -12,18 +12,14 @@ services:
       - LUIX_RPC_REGISTRY_HOST=consul
     ports:
       - 127.0.0.1:4001:4001
-    healthcheck:
-      test:
-        - CMD
-        - curl
-        - -f
-        - http://localhost:4001/management/health
-      interval: 5s
-      timeout: 5s
-      retries: 40
     depends_on:
       mongodb:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4001/management/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
   rpc-client-demo:
     image: luix-rpc-client-demo
     container_name: luix-rpc-client-demo
@@ -34,18 +30,14 @@ services:
       - LUIX_RPC_REGISTRY_HOST=consul
     ports:
       - 127.0.0.1:4002:4002
-    healthcheck:
-      test:
-        - CMD
-        - curl
-        - -f
-        - http://localhost:4002/management/health
-      interval: 5s
-      timeout: 5s
-      retries: 40
     depends_on:
       rpc-server-demo:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4002/management/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
   consul:
     extends:
       file: ./consul.yml
