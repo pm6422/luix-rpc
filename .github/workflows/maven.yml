@@ -9,10 +9,13 @@ on:
     branches: [ main ]
 jobs:
   build:
-    runs-on: Macos-14
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout codes
         uses: actions/checkout@v4
+      - name: Build and push rpc portal image to registry
+        # run: mvn compile jib:build
+        run: cd luix-rpc-portal && npm run docker:build && npm run docker:push
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:

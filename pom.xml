@@ -16,7 +16,6 @@
         <module>luix-rpc-spring-enhancement</module>
         <module>luix-rpc-web-center</module>
         <module>luix-rpc-demo</module>
-        <module>luix-rpc-portal</module>
     </modules>
     <properties>
         <revision>1.0.0</revision>

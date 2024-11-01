@@ -1,0 +1,11 @@
+{
+  "name": "luix-rpc-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Luix RPC Portal Package Management",
+  "license": "UNLICENSED",
+  "scripts": {
+    "docker:build": "docker build -t ttl.sh/luix-rpc-portal:1d .",
+    "docker:push": "docker push ttl.sh/luix-rpc-portal:1d"
+  }
+}
