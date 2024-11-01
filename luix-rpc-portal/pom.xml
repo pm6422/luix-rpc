@@ -110,6 +110,11 @@
                                 </auth>
                             </to>
                             <container>
+                                <entrypoint>
+                                    <shell>bash</shell>
+                                    <option>-c</option>
+                                    <arg>/entrypoint.sh</arg>
+                                </entrypoint>
                                 <environment>
                                     <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
                                     <SLEEP_TIME>1</SLEEP_TIME>
@@ -119,6 +124,21 @@
                                 <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                                 <user>root</user>
                             </container>
+                            <extraDirectories>
+                                <paths>
+                                    <path>src/main/jib</path>
+                                </paths>
+                                <permissions>
+                                    <permission>
+                                        <file>/entrypoint.sh</file>
+                                        <mode>755</mode>
+                                    </permission>
+                                    <permission>
+                                        <file>/arthas-run.sh</file>
+                                        <mode>755</mode>
+                                    </permission>
+                                </permissions>
+                            </extraDirectories>
                         </configuration>
                         <executions>
                             <execution>
