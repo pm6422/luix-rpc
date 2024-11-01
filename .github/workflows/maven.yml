@@ -13,8 +13,7 @@ jobs:
     steps:
       - name: Checkout codes
         uses: actions/checkout@v4
-      - name: Build and push rpc portal image to registry
-        # run: mvn compile jib:build
+      - name: Build and push luix rpc portal image to registry
         run: cd luix-rpc-portal && npm run docker:build && npm run docker:push
       - name: Set up JDK 21
         uses: actions/setup-java@v4
