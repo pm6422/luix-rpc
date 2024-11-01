@@ -19,7 +19,7 @@
         <maven.version>3.6.2</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <quarkus.version>3.16.1</quarkus.version>
-        <start-class>com.luixtech.rpc.portal.RpcPortalApplication</start-class>
+        <start-class>com.luixtech.rpc.portal.LuixRpcPortalApplication</start-class>
     </properties>
     <dependencyManagement>
         <dependencies>
