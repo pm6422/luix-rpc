@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version>
-        <relativePath/>
-    </parent>
     <groupId>com.luixtech</groupId>
     <artifactId>luix-rpc-portal</artifactId>
     <version>1.0.0</version>
@@ -24,14 +18,15 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.version>3.6.2</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>com.luixtech.rpc.portal.LuixRpcPortalApplication</start-class>
+        <quarkus.version>3.16.1</quarkus.version>
+        <start-class>com.luixtech.rpc.portal.RpcPortalApplication</start-class>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>luix-rpc</artifactId>
-                <version>${project.version}</version>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -39,12 +34,21 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>com.luixtech</groupId>
-            <artifactId>luix-springboot3-framework</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
-        <defaultGoal>spring-boot:run</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>com.github.ekryd.sortpom</groupId>
@@ -69,48 +73,16 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <phase>validate</phase>
-                        <configuration>
-                            <outputDirectory>target/classes/static</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/webapp</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-testResources</id>
-                        <goals>
-                            <goal>testResources</goal>
-                        </goals>
-                        <phase>process-test-resources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>${start-class}</mainClass>
-                    <!--
-                    Enable the line below to have remote debugging of your application on port 5005
-                    <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
-                    -->
-                </configuration>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <version>${quarkus.version}</version>
+                <extensions>true</extensions>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>repackage</goal>
-                            <goal>build-info</goal>
+                            <goal>build</goal>
+                            <goal>generate-code</goal>
+                            <goal>native-image-agent</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -144,11 +116,7 @@
                                 </auth>
                             </to>
                             <container>
-                                <entrypoint>
-                                    <shell>bash</shell>
-                                    <option>-c</option>
-                                    <arg>/entrypoint.sh</arg>
-                                </entrypoint>
+                                <mainClass>io.quarkus.runner.GeneratedMain</mainClass>
                                 <environment>
                                     <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
                                     <SLEEP_TIME>1</SLEEP_TIME>
@@ -158,21 +126,6 @@
                                 <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                                 <user>root</user>
                             </container>
-                            <extraDirectories>
-                                <paths>
-                                    <path>src/main/jib</path>
-                                </paths>
-                                <permissions>
-                                    <permission>
-                                        <file>/entrypoint.sh</file>
-                                        <mode>755</mode>
-                                    </permission>
-                                    <permission>
-                                        <file>/arthas-run.sh</file>
-                                        <mode>755</mode>
-                                    </permission>
-                                </permissions>
-                            </extraDirectories>
                         </configuration>
                         <executions>
                             <execution>
