@@ -1,11 +1,18 @@
+# 阶段一：构建应用
+FROM node:22-alpine AS build
+
+# 设置环境变量强制使用JS版本的Rollup
+ENV ROLLUP_USE_NATIVE=false
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# 阶段二：服务应用
 FROM nginx:alpine3.20-slim
-
-# Delete all files in nginx default directory
-RUN rm /usr/share/nginx/html/*
-
-# Copy all files in /app to /usr/share/nginx/html
-COPY app /usr/share/nginx/html/
-
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
