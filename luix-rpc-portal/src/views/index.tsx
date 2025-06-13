@@ -163,19 +163,19 @@ export default function LuixRpcPage() {
       server: {
         title: "Server Setup",
         steps: [
-          { title: "1. Add LUIX dependency", image: "/assets/images/rpc/code/luix-dependency.png" },
-          { title: "2. Add server interface dependency", image: "/assets/images/rpc/code/common-dependency.png" },
-          { title: "3. Add LUIX configuration", image: "/assets/images/rpc/code/server.png" },
-          { title: "4. Expose server services", image: "/assets/images/rpc/code/provider.png" }
+          { title: "1. Add LUIX dependency", image: "/assets/images/code/luix-dependency.png" },
+          { title: "2. Add server interface dependency", image: "/assets/images/code/common-dependency.png" },
+          { title: "3. Add LUIX configuration", image: "/assets/images/code/server.png" },
+          { title: "4. Expose server services", image: "/assets/images/code/provider.png" }
         ]
       },
       client: {
         title: "Client Setup",
         steps: [
-          { title: "1. Add LUIX dependency", image: "/assets/images/rpc/code/luix-dependency.png" },
-          { title: "2. Add server interface dependency", image: "/assets/images/rpc/code/common-dependency.png" },
-          { title: "3. Add LUIX configuration", image: "/assets/images/rpc/code/client.png" },
-          { title: "4. Reference services on the client", image: "/assets/images/rpc/code/consumer.png" }
+          { title: "1. Add LUIX dependency", image: "/assets/images/code/luix-dependency.png" },
+          { title: "2. Add server interface dependency", image: "/assets/images/code/common-dependency.png" },
+          { title: "3. Add LUIX configuration", image: "/assets/images/code/client.png" },
+          { title: "4. Reference services on the client", image: "/assets/images/code/consumer.png" }
         ]
       }
     },
@@ -272,7 +272,7 @@ export default function LuixRpcPage() {
       <nav className="fixed top-0 w-full bg-background z-50 border-b">
         <div className="container flex items-center justify-between h-16 relative">
           <a href="#" className="flex items-center gap-2 text-xl font-bold">
-            <img src="/assets/images/rpc/logo.png" alt="Logo" className="size-10" />
+            <img src="/assets/images/logo.svg" alt="Logo" className="size-10" />
             {content.navigation.brand}
           </a>
 
@@ -433,11 +433,11 @@ export default function LuixRpcPage() {
             <div className="flex justify-center hidden md:flex">
               <div className="space-y-4 sticky top-20 h-fit">
                 <img
-                  src="/assets/images/rpc/perspective1.png"
+                  src="/assets/images/perspective1.png"
                   alt="Dashboard Screenshot"
                 />
                 <img
-                  src="/assets/images/rpc/perspective2.png"
+                  src="/assets/images/perspective2.png"
                   alt="Dashboard Screenshot"
                 />
               </div>
@@ -533,7 +533,7 @@ export default function LuixRpcPage() {
             </div>
             <div className="flex justify-center">
               <img
-                src="/assets/images/rpc/screenshot2.png"
+                src="/assets/images/screenshot2.png"
                 alt="Design concept"
                 className="max-h-80"
               />

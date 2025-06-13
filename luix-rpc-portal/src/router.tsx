@@ -5,7 +5,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     lazy: async () => ({
-      Component: (await import("./views/rpc")).default
+      Component: (await import("./views")).default
     }),
   },
 ])
