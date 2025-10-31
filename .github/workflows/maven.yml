@@ -16,9 +16,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build and push luix rpc portal image to registry
-        run: cd luix-rpc-portal && npm run docker:build && npm run docker:push
-
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -29,7 +26,10 @@ jobs:
       - name: Login to registry
         run: echo "${{ vars.GHCR_ACCESS_TOKEN }}" | docker login ${{ vars.GHCR_URL }} -u ${{ vars.GHCR_USERNAME }} --password-stdin
 
-      - name: Build and push docker image to registry
+      - name: Build and push portal image to registry
+        run: cd luix-rpc-portal && npm run docker:build && npm run docker:push
+
+      - name: Build and push other docker images to registry
         run: npm run docker:push -- -Djib.image.version=latest -Djib.registry.url=${{ vars.GHCR_URL }}/${{vars.GHCR_USERNAME}}/
 
       - name: Send success notification
