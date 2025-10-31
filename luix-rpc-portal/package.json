@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "docker:build": "docker build -t ttl.sh/luix-rpc-portal:1d .",
-    "docker:push": "docker push ttl.sh/luix-rpc-portal:1d",
+    "docker:build": "docker build -t ghcr.io/pm6422/luix-rpc-portal:latest .",
+    "docker:push": "docker push ghcr.io/pm6422/luix-rpc-portal:latest",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
