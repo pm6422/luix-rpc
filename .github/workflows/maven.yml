@@ -39,7 +39,7 @@ jobs:
           url: '${{ vars.NTFY_URL }}'
           topic: '${{ vars.NTFY_TOPIC }}'
           title: '😀 Successfully built docker image'
-          icon: 'https://raw.githubusercontent.com/pm6422/luix-rpc/main/luix-rpc-portal/public/assets/images/logo.png'
+          icon: 'https://raw.githubusercontent.com/pm6422/pm6422/main/assets/images/logo/luix-rpc.png'
 
       - name: Send failure notification
         uses: niniyas/ntfy-action@master
